@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BotalSePaisa · Dashboard</title>
+    <link rel="stylesheet" href="styles/user.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="brand"><img src="images/logo.jpg" alt="logo" style="height:28px;vertical-align:middle;">
+                    BotalSePaisa</span>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active"><span class="icon">🏠</span> Dashboard</li>
+                    <li><span class="icon">🔍</span> <a href="qr.html">Scan QR Code</a></li>
+                    <li><span class="icon">📦</span> <a href="return.html">Return History</a></li>
+                    <li><span class="icon">🏆</span> <a href="leaderboard.html">Leaderboard</a></li>
+                    <li><span class="icon">🤝</span> <a href="invite.html">Invite Friends</a></li>
+                    <li><span class="icon">🛠️</span> <a href="support.html">Support</a></li>
+                    <li><span class="icon">⏻</span> <a href="login.html">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main>
+            <header class="main-header">
+                <span>Dashboard</span>
+                <div class="profile">
+                    <span>User Name</span>
+                    <img src="profile.jpg" class="avatar" alt="user" />
+                </div>
+            </header>
+            <section class="grid-summary">
+                <div class="summary-card">
+                    <div class="sum-title">Bottles Returned</div>
+                    <div class="sum-amount">0</div>
+                    <div class="sum-sub">+0% Since Last Month</div>
+                </div>
+                <div class="summary-card">
+                    <div class="sum-title">UPI Earned</div>
+                    <div class="sum-amount">&#8377;0</div>
+                    <div class="sum-sub">+0% Since Last Month</div>
+                </div>
+                <div class="summary-card">
+                    <div class="sum-title">Leaderboard Rank</div>
+                    <div class="sum-amount">#0</div>
+                    <div class="sum-sub">City Region</div>
+                </div>
+            </section>
+            <section class="grid-widgets">
+                <div class="widget overview">
+                    <div class="w-title">Overview</div>
+                    <ul>
+                        <li class="active">Balance <span class="meta">&#8377;0.00</span></li>
+                        <li>Withdrawals <span class="meta">&#8377;0</span></li>
+                        <li>Rewards <span class="meta">&#8377;0</span></li>
+                        <li>Bottles <span class="meta">0</span></li>
+                    </ul>
+                </div>
+                <div class="widget sale">
+                    <div class="w-title flex-row-sb">
+                        <span>Recycling Rate</span>
+                    </div>
+                    <div class="circular-progress">
+                        <span>70%</span>
+                    </div>
+                </div>
+                <div class="widget activity">
+                    <div class="w-title flex-row-sb">
+                        <span>Activity</span>
+                    </div>
+                    <ul>
+                        <li><span class="dot yellow"></span>No recent activity</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+
+</html>

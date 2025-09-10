@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Invite Friends | Botalsepaisa</title>
+    <link rel="stylesheet" href="styles/invite.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+    <header class="header">
+        <h1 class="logo">Botalsepaisa</h1>
+        <button class="back-btn" onclick="location.href='user.html'">← Back to Dashboard</button>
+    </header>
+
+    <main class="container">
+        <h2>Invite Friends & Earn Rewards</h2>
+
+        <p>Share your referral link or invite friends by entering their email addresses below.</p>
+
+        <section class="referral-link-section">
+            <label for="referral-link">Your Referral Link</label>
+            <div class="referral-link-wrapper">
+                <input type="text" id="referral-link" readonly value="https://botalsepaisa.com/referral/USER12345" />
+                <button id="copy-link-btn">Copy Link</button>
+            </div>
+            <p id="copy-status" class="copy-status"></p>
+        </section>
+
+        <section class="invite-form-section">
+            <form id="invite-form">
+                <label for="friend-email">Friend's Email</label>
+                <input type="email" id="friend-email" required placeholder="Enter friend's email" />
+                <button type="submit">Send Invitation</button>
+            </form>
+        </section>
+
+        <p class="note">Anyone who signs up using your referral link or email will earn you rewards!</p>
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 Botalsepaisa · Transforming waste into wealth</p>
+    </footer>
+
+    <script>
+        const copyBtn = document.getElementById('copy-link-btn');
+        const referralInput = document.getElementById('referral-link');
+        const copyStatus = document.getElementById('copy-status');
+        const inviteForm = document.getElementById('invite-form');
+
+        copyBtn.addEventListener('click', () => {
+            referralInput.select();
+            referralInput.setSelectionRange(0, 99999); // For mobile devices
+            navigator.clipboard.writeText(referralInput.value).then(() => {
+                copyStatus.textContent = 'Link copied to clipboard!';
+                setTimeout(() => copyStatus.textContent = '', 3000);
+            });
+        });
+
+        inviteForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const email = document.getElementById('friend-email').value.trim();
+
+            if (email) {
+                alert(`Invitation sent to ${email}!`);
+                inviteForm.reset();
+            }
+        });
+    </script>
+</body>
+
+</html>

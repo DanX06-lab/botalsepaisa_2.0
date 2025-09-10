@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Return History | Botalsepaisa</title>
+    <link rel="stylesheet" href="styles/return.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+    <header class="header">
+        <h1 class="logo">Botalsepaisa</h1>
+        <button class="back-btn" onclick="location.href='user.html'">← Back to Dashboard</button>
+    </header>
+
+    <main class="container">
+        <h2>Return History</h2>
+
+        <section class="filter-section">
+            <label for="date-filter">Filter by Date:</label>
+            <input type="date" id="date-filter" name="date-filter" />
+            <label for="status-filter">Status:</label>
+            <select id="status-filter" name="status-filter">
+                <option value="">All</option>
+                <option value="completed">Completed</option>
+                <option value="pending">Pending</option>
+                <option value="rejected">Rejected</option>
+            </select>
+            <button id="clear-filters">Clear Filters</button>
+        </section>
+
+        <table aria-label="Return History Table">
+            <thead>
+                <tr>
+                    <th>Bottle ID</th>
+                    <th>Date Returned</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Reward Earned</th>
+                </tr>
+            </thead>
+            <tbody id="history-table-body">
+                <!-- Sample rows - replace with dynamic data -->
+                <tr>
+                    <td>BTL123456</td>
+                    <td>2025-09-01</td>
+                    <td>Central Collection Center</td>
+                    <td><span class="status completed">Completed</span></td>
+                    <td>₹50</td>
+                </tr>
+                <tr>
+                    <td>BTL654321</td>
+                    <td>2025-08-29</td>
+                    <td>North Recycling Hub</td>
+                    <td><span class="status pending">Pending</span></td>
+                    <td>₹30</td>
+                </tr>
+                <tr>
+                    <td>BTL789012</td>
+                    <td>2025-08-25</td>
+                    <td>East Bottle Depot</td>
+                    <td><span class="status rejected">Rejected</span></td>
+                    <td>₹0</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 Botalsepaisa · Transforming waste into wealth</p>
+    </footer>
+</body>
+
+</html>

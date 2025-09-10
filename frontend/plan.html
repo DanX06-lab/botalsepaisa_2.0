@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Future Plans | Botalsepaisa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles/plan.css" />
+</head>
+
+<body>
+    <header class="header">
+        <div class="brand">
+            <img src="main_logo.jpg" alt="Botalsepaisa" class="logo" />
+            <span>Botalsepaisa</span>
+        </div>
+        <button class="back-btn" onclick="location.href='index.html'">← Back to Dashboard</button>
+    </header>
+
+    <main class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="title">Coming Soon</h1>
+            <p class="subtitle">Our roadmap and future plans are in the works. Check back soon for exciting updates.</p>
+
+            <div class="cta-group">
+                <button class="notify-btn"
+                    onclick="document.getElementById('notify').scrollIntoView({behavior:'smooth'})">
+                    Notify Me
+                </button>
+                <button class="learn-btn" onclick="location.href='index.html#about'">
+                    Learn More
+                </button>
+            </div>
+
+            <div class="pill-row">
+                <div class="pill">Phase 1 • Soon</div>
+                <div class="pill">Phase 2 • Soon</div>
+                <div class="pill">Phase 3 • Soon</div>
+            </div>
+        </div>
+
+        <div class="shapes">
+            <span class="blob blob-1"></span>
+            <span class="blob blob-2"></span>
+            <span class="grid"></span>
+        </div>
+    </main>
+
+    <section class="notify" id="notify">
+        <h2>Get notified when the roadmap goes live</h2>
+        <form class="notify-form"
+            onsubmit="event.preventDefault(); document.getElementById('status').textContent='Thanks! We’ll keep you posted.'; this.reset();">
+            <input type="email" placeholder="Enter email address" required />
+            <button type="submit">Notify Me</button>
+        </form>
+        <p id="status" class="status" aria-live="polite"></p>
+    </section>
+
+    <footer class="footer">
+        <p>© 2025 Botalsepaisa · Transforming waste into wealth</p>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How It Works - botalsepaisa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="styles/how_it_works.css" />
+    <style>
+        /* Fix text overlapping */
+        body,
+        p,
+        h1,
+        h2,
+        h3,
+        span,
+        div {
+            line-height: 1.5;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .process-timeline {
+            display: flex;
+            flex-wrap: wrap;
+            /* Allow steps to wrap and avoid overlap */
+            gap: 1.5rem;
+        }
+
+        .process-step {
+            box-sizing: border-box;
+            flex: 1 1 45%;
+            /* Responsive width with wrap */
+            min-width: 300px;
+            margin-bottom: 1rem;
+        }
+
+        .step-content p {
+            margin-bottom: 1rem;
+        }
+
+        /* Optional: Avoid overlapping in FAQ answers */
+        .faq-answer p {
+            white-space: normal;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">botalsepaisa</div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="how_it_works.html" class="nav-link active">How it Works</a></li>
+                <li><a href="aboutus.html" class="nav-link">About us</a></li>
+                <li><a href="impact.html" class="nav-link">Impact</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+                <li><a href="login.html" class="nav-link">Login</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-badge">SIMPLE PROCESS</span>
+                <h1>How botalsepaisa Works</h1>
+                <p>
+                    Transform your plastic bottles into instant rewards through our innovative 4-step recycling
+                    process. It's simple, rewarding, and helps save the planet.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Steps Section -->
+    <section class="process-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">THE PROCESS</span>
+                <h2>4 Simple Steps to Earn Rewards</h2>
+                <p>Our streamlined process makes recycling effortless while maximizing your earnings</p>
+            </div>
+
+            <div class="process-timeline">
+                <!-- Step 1 -->
+                <div class="process-step">
+                    <div class="step-number">
+                        <span>01</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M21 15.9999V7.9999C21 6.2699 19.64 4.8399 17.83 4.3999L9 1.8399C8.76 1.7699 8.24 1.7699 8 1.8399L3.83 3.1799C2.64 3.5199 1 4.6999 1 7.9999V15.9999C1 16.5499 1.45 16.9999 2 16.9999C2.55 16.9999 3 16.5499 3 15.9999V7.9999C3 6.4799 3.88 6.0799 4.17 5.9999L8 4.8099V13.1199C8 14.6999 9.31 15.9999 10.9 15.9999H21Z"
+                                    stroke="currentColor" stroke-width="1.5" />
+                                <path
+                                    d="M10.9 17H21C21.55 17 22 16.55 22 16V8C22 7.45 21.55 7 21 7H10.9C10.35 7 9.9 7.45 9.9 8V16C9.9 16.55 10.35 17 10.9 17Z"
+                                    stroke="currentColor" stroke-width="1.5" />
+                            </svg>
+                        </div>
+                        <h3>Download the App</h3>
+                        <p>
+                            Get the botalsepaisa app from Google Play Store or App Store. Sign up with your mobile
+                            number
+                            and complete a quick verification process.
+                        </p>
+                        <div class="step-features">
+                            <span>✓ Free download</span>
+                            <span>✓ Quick registration</span>
+                            <span>✓ Instant verification</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="process-step">
+                    <div class="step-number">
+                        <span>02</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z"
+                                    stroke="currentColor" stroke-width="1.5" />
+                                <path
+                                    d="M9 10C10.1046 10 11 9.10457 11 8C11 6.89543 10.1046 6 9 6C7.89543 6 7 6.89543 7 8C7 9.10457 7.89543 10 9 10Z"
+                                    stroke="currentColor" stroke-width="1.5" />
+                                <path
+                                    d="M2.67004 18.9501L7.60004 15.6401C8.39004 15.1101 9.53004 15.1701 10.24 15.7801L10.57 16.0701C11.35 16.7401 12.61 16.7401 13.39 16.0701L17.55 12.5001C18.33 11.8301 19.59 11.8301 20.37 12.5001L22 13.9001"
+                                    stroke="currentColor" stroke-width="1.5" />
+                            </svg>
+                        </div>
+                        <h3>Scan & Collect</h3>
+                        <p>
+                            Use the app's scanner to identify eligible bottles. Collect plastic bottles from your home,
+                            office, or neighborhood. Each bottle type has different reward values.
+                        </p>
+                        <div class="step-features">
+                            <span>✓ Smart bottle recognition</span>
+                            <span>✓ Real-time value calculator</span>
+                            <span>✓ Collection tracking</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="process-step">
+                    <div class="step-number">
+                        <span>03</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                    stroke="currentColor" stroke-width="1.5" />
+                                <path d="M7.99998 3H8.99998C7.04998 8.84 7.04998 15.16 8.99998 21H7.99998"
+                                    stroke="currentColor" stroke-width="1.5" />
+                                <path d="M15 3C16.95 8.84 16.95 15.16 15 21" stroke="currentColor" stroke-width="1.5" />
+                                <path d="M3 16V15C8.84 16.95 15.16 16.95 21 15V16" stroke="currentColor"
+                                    stroke-width="1.5" />
+                                <path d="M3 9.0001C8.84 7.0501 15.16 7.0501 21 9.0001" stroke="currentColor"
+                                    stroke-width="1.5" />
+                            </svg>
+                        </div>
+                        <h3>Find Drop-off Points</h3>
+                        <p>
+                            Locate the nearest botalsepaisa collection center using our interactive map. Choose from
+                            247+
+                            locations across India for convenient drop-offs.
+                        </p>
+                        <div class="step-features">
+                            <span>✓ GPS navigation</span>
+                            <span>✓ Real-time availability</span>
+                            <span>✓ Operating hours</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="process-step">
+                    <div class="step-number">
+                        <span>04</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M16 12H17.5C19.43 12 21 10.43 21 8.5V7C21 5.9 20.1 5 19 5H16.5C15.67 5 15 5.67 15 6.5V7.5C15 8.33 15.67 9 16.5 9H19"
+                                    stroke="currentColor" stroke-width="1.5" />
+                                <path
+                                    d="M12.5 5H7.5C5.57 5 4 6.57 4 8.5V15.5C4 17.43 5.57 19 7.5 19H16.5C18.43 19 20 17.43 20 15.5V14"
+                                    stroke="currentColor" stroke-width="1.5" />
+                            </svg>
+                        </div>
+                        <h3>Earn Instant Rewards</h3>
+                        <p>
+                            Get instant cash rewards credited to your wallet upon bottle verification. Withdraw to bank
+                            account or use for shopping vouchers and discounts.
+                        </p>
+                        <div class="step-features">
+                            <span>✓ Instant payment</span>
+                            <span>✓ Multiple withdraw options</span>
+                            <span>✓ Reward multipliers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rewards Section -->
+    <section class="rewards-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">EARNING POTENTIAL</span>
+                <h2>How Much Can You Earn?</h2>
+                <p>Different bottle types offer varying reward values based on their recyclability and demand</p>
+            </div>
+
+            <div class="rewards-grid">
+                <div class="reward-card">
+                    <div class="bottle-type">
+                        <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=80&h=120&fit=crop"
+                            alt="Water Bottle" />
+                    </div>
+                    <h3>Water Bottles (500ml)</h3>
+                    <div class="reward-amount">₹0.50 - ₹1.00</div>
+                    <p>Clear plastic bottles from major water brands</p>
+                </div>
+
+                <div class="reward-card">
+                    <div class="bottle-type">
+                        <img src="https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=80&h=120&fit=crop"
+                            alt="Soft Drink Bottle" />
+                    </div>
+                    <h3>Soft Drink Bottles</h3>
+                    <div class="reward-amount">₹1.00 - ₹2.00</div>
+                    <p>Coca-Cola, Pepsi, and other carbonated drinks</p>
+                </div>
+
+                <div class="reward-card">
+                    <div class="bottle-type">
+                        <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=80&h=120&fit=crop"
+                            alt="Juice Bottle" />
+                    </div>
+                    <h3>Juice Bottles</h3>
+                    <div class="reward-amount">₹0.75 - ₹1.50</div>
+                    <p>Packaged fruit juices and health drinks</p>
+                </div>
+
+                <div class="reward-card">
+                    <div class="bottle-type">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=80&h=120&fit=crop"
+                            alt="Large Bottle" />
+                    </div>
+                    <h3>Large Bottles (1L+)</h3>
+                    <div class="reward-amount">₹2.00 - ₹5.00</div>
+                    <p>Family packs and bulk containers</p>
+                </div>
+            </div>
+
+            <div class="earning-calculator">
+                <h3>Calculate Your Monthly Earnings</h3>
+                <div class="calculator-grid">
+                    <div class="calc-input">
+                        <label>Bottles per day:</label>
+                        <input type="number" id="bottlesPerDay" value="5" min="1" max="100" />
+                    </div>
+                    <div class="calc-result">
+                        <label>Monthly Earnings:</label>
+                        <span id="monthlyEarning">₹75 - ₹150</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">FAQ</span>
+                <h2>Frequently Asked Questions</h2>
+                <p>Get answers to common questions about botalsepaisa</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>What types of bottles are accepted?</h4>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            We accept all plastic bottles with recycling codes 1 (PET) and 2 (HDPE), including water
+                            bottles,
+                            soft drink bottles, juice containers, and cleaning product bottles.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>How quickly do I receive my rewards?</h4>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Rewards are credited instantly to your botalsepaisa wallet upon bottle verification at our
+                            collection
+                            centers. You can withdraw to your bank account within 24 hours.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Is there a minimum withdrawal amount?</h4>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            The minimum withdrawal amount is ₹50 for bank transfers and ₹25 for shopping vouchers. There
+                            are no
+                            maximum limits.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Are there any charges or fees?</h4>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>botalsepaisa is completely free to use. There are no registration fees, transaction charges,
+                            or hidden costs.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Can I collect bottles from others?</h4>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Yes! You can collect bottles from family, friends, neighbors, or local businesses. Many
+                            users create small
+                            collection networks to maximize earnings.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>What happens to the bottles after collection?</h4>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Collected bottles are sorted, cleaned, and sent to certified recycling facilities where
+                            they're processed into new products,
+                            reducing environmental impact.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Start Earning?</h2>
+                <p>Join thousands of users who are already making money while helping the environment. Download
+                    botalsepaisa today and start your recycling journey!
+                </p>
+                <div class="cta-buttons">
+                    <a href="download.html" class="cta-btn primary">Download App</a>
+                    <a href="collection.html" class="cta-btn secondary">Find Collection Centers</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>botalsepaisa RECYCLE PLAN</h4>
+                    <div class="process-steps">
+                        <div class="step">
+                            <div class="step-number">01</div>
+                            <p>Download</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">02</div>
+                            <p>Collect</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">03</div>
+                            <p>Recycle</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">04</div>
+                            <p>Earn</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <!-- <div class="link-column">
+                        <h4>STAY INFORMED</h4>
+                        <ul>
+                            <li><a href="#">Rewards</a></li>
+                            <li><a href="#">Impact Tracker</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-column">
+                        <h4>INFORMATION</h4>
+                        <ul>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div> -->
+                    <div class="link-column">
+                        <h4>Contact</h4>
+                        <p>Call us: +91 98765 43210</p>
+                        <p>Email: hello@botalsepaisa.com</p>
+                    </div>
+                </div>
+
+                <div class="footer-logo-section">
+                    <div class="footer-logo">
+                        <img src="images/logo.jpg" alt="botalsepaisa Logo" class="logo-image" />
+                    </div>
+                    <p class="footer-tagline">Transform bottles into rewards for a sustainable future</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-instagram" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-facebook" viewBox="0 0 16 16">
+                                <path
+                                    d="M8.94 6.093H7.5v4.218h1.438V16H8.94v-5.69h1.687l.25-1.56H8.94V6.78c0-.454.18-.76.91-.76h.78v-1.5a11.51 11.51 0 0 0-1.58-.08c-1.56 0-2.62 1.008-2.62 2.86v1.188z" />
+                            </svg>
+
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>
+                    &copy; 2025 botalsepaisa. All rights reserved. | Transforming waste into wealth for a sustainable
+                    future.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Hamburger menu functionality
+        const hamburger = document.querySelector(".hamburger");
+        const navMenu = document.querySelector(".nav-menu");
+        const navLinks = document.querySelectorAll(".nav-link");
+
+        function mobileMenu() {
+            hamburger.classList.toggle("active");
+            navMenu.classList.toggle("active");
+        }
+
+        function closeMenu() {
+            hamburger.classList.remove("active");
+            navMenu.classList.remove("active");
+        }
+
+        hamburger.addEventListener("click", mobileMenu);
+        navLinks.forEach((link) => link.addEventListener("click", closeMenu));
+
+        document.addEventListener("click", function (event) {
+            const isClickInsideNav = navMenu.contains(event.target);
+            const isClickOnHamburger = hamburger.contains(event.target);
+
+            if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains("active")) {
+                closeMenu();
+            }
+        });
+
+        window.addEventListener("resize", function () {
+            if (window.innerWidth > 768) {
+                closeMenu();
+            }
+        });
+
+        // FAQ functionality
+        const faqItems = document.querySelectorAll(".faq-item");
+        faqItems.forEach((item) => {
+            const question = item.querySelector(".faq-question");
+            question.addEventListener("click", () => {
+                item.classList.toggle("active");
+            });
+        });
+
+        // Earnings calculator
+        const bottlesInput = document.getElementById("bottlesPerDay");
+        const monthlyEarning = document.getElementById("monthlyEarning");
+
+        function calculateEarnings() {
+            const bottles = parseInt(bottlesInput.value) || 0;
+            const minDaily = bottles * 0.5;
+            const maxDaily = bottles * 2.0;
+            const minMonthly = Math.round(minDaily * 30);
+            const maxMonthly = Math.round(maxDaily * 30);
+            monthlyEarning.textContent = `₹${minMonthly} - ₹${maxMonthly}`;
+        }
+
+        bottlesInput.addEventListener("input", calculateEarnings);
+        calculateEarnings(); // Initial calculation
+    </script>
+</body>
+
+</html>

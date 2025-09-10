@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Collection Centres | Botalsepaisa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles/collection.css" />
+</head>
+
+<body>
+    <header class="header">
+        <div class="brand">
+            <img src="images/logo.jpg" alt="Botalsepaisa" class="logo" />
+            <span>Botalsepaisa</span>
+        </div>
+        <nav class="nav">
+            <a href="how_it_works.html" class="back">← Back to Dashboard</a>
+        </nav>
+    </header>
+
+    <main class="hero">
+        <div class="stripe-bg" aria-hidden="true"></div>
+
+        <section class="hero-inner">
+            <div class="hero-left">
+                <h1 class="eyebrow">Collection Centres</h1>
+                <h2 class="title">Coming Soon</h2>
+                <p class="lead">
+                    Discover nearby certified drop points, hours, rewards, and live queue time.
+                    The centres directory is being finalized—launching shortly.
+                </p>
+
+                <div class="search-stub">
+                    <input type="text" placeholder="Search city or PIN code (Soon)" disabled />
+                    <button disabled>Find Centres</button>
+                </div>
+
+                <div class="chips">
+                    <span class="chip">24×7 Kiosks</span>
+                    <span class="chip">Verified Partners</span>
+                    <span class="chip">Instant Rewards</span>
+                </div>
+
+            </div>
+
+            <aside class="hero-right" aria-label="Preview card">
+                <div class="card">
+                    <div class="card-map">
+                        <!-- Placeholder mini map grid -->
+                        <div class="map-grid"></div>
+                        <div class="pin pin-1"></div>
+                        <div class="pin pin-2"></div>
+                        <div class="pin pin-3"></div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Nearby Centres</h3>
+                        <ul class="mini-list">
+                            <li>
+                                <span class="dot green"></span>
+                                Central Depot • 0.8 km
+                            </li>
+                            <li>
+                                <span class="dot amber"></span>
+                                East Hub • 2.1 km
+                            </li>
+                            <li>
+                                <span class="dot red"></span>
+                                Riverside Kiosk • 3.4 km
+                            </li>
+                        </ul>
+                        <p class="soon">Live listings coming soon</p>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <section class="notify" id="notify" aria-labelledby="notify-title">
+        <h2 id="notify-title">Get notified when centres go live</h2>
+        <form class="notify-form"
+            onsubmit="event.preventDefault(); document.getElementById('status').textContent='Thanks! We’ll let you know as soon as it launches.'; this.reset();">
+            <input type="email" placeholder="Email address" required />
+            <button type="submit">Notify Me</button>
+        </form>
+        <p id="status" class="status" aria-live="polite"></p>
+    </section>
+
+    <footer class="footer">
+        <p>© 2025 Botalsepaisa · Transforming waste into wealth</p>
+    </footer>
+</body>
+
+</html>

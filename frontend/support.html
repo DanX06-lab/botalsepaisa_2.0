@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Support | Botalsepaisa</title>
+    <link rel="stylesheet" href="styles/support.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+    <header class="header">
+        <h1 class="logo">Botalsepaisa</h1>
+        <button class="back-btn" onclick="location.href='user.html'">← Back to Dashboard</button>
+    </header>
+
+    <main class="container">
+        <h2>Support & Help</h2>
+
+        <section class="contact-info">
+            <h3>Contact Us</h3>
+            <p>Email: <a href="mailto:support@botalsepaisa.com">support@botalsepaisa.com</a></p>
+            <p>Phone: <a href="tel:+911234567890">+91 12345 67890</a></p>
+        </section>
+
+        <section class="support-form-section">
+            <h3>Submit a Support Request</h3>
+            <form id="support-form">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" placeholder="Subject of your request" required />
+
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="6" placeholder="Describe your issue or question"
+                    required></textarea>
+
+                <button type="submit">Send Request</button>
+            </form>
+            <p id="form-feedback" class="form-feedback" aria-live="polite"></p>
+        </section>
+
+        <section class="faq-section">
+            <h3>Frequently Asked Questions</h3>
+
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">How do I earn rewards?</button>
+                <div class="faq-answer" hidden>
+                    <p>Rewards are earned by returning plastic bottles at authorized collection centers as per the
+                        BottalSePaisa program.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">Can I track my recycling history?</button>
+                <div class="faq-answer" hidden>
+                    <p>Yes, your recycling history is available on the Return History page accessible from the
+                        dashboard.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false">How to contact customer support?</button>
+                <div class="faq-answer" hidden>
+                    <p>You may contact us via the support form here or email support@botalsepaisa.com.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 Botalsepaisa · Transforming waste into wealth</p>
+    </footer>
+
+    <script>
+        // FAQ accordion toggle
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const expanded = button.getAttribute('aria-expanded') === 'true';
+                button.setAttribute('aria-expanded', !expanded);
+                const answer = button.nextElementSibling;
+                if (answer) answer.hidden = expanded;
+            });
+        });
+
+        // Support form submit
+        const form = document.getElementById('support-form');
+        const feedback = document.getElementById('form-feedback');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            feedback.textContent = 'Submitting your request...';
+
+            // Simulate API submission
+            setTimeout(() => {
+                feedback.textContent = 'Thank you! Your support request has been sent.';
+                form.reset();
+            }, 1500);
+        });
+    </script>
+</body>
+
+</html>
