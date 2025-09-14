@@ -16,7 +16,7 @@ const loginForm = document.getElementById('loginForm');
 const signupMessage = document.getElementById('signupMessage');
 const loginMessage = document.getElementById('loginMessage');
 
-const API_BASE = 'http://localhost:5000/api/users';
+const API_BASE = 'https://botalsepaisa-user-server.onrender.com';
 
 signupForm?.addEventListener('submit', async (e) => {
     e.preventDefault();

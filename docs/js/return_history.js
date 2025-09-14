@@ -3,7 +3,7 @@
 
     // API Configuration
     const API_CONFIG = {
-        ngrok: 'https://c7c917092226.ngrok-free.app/api/admin',
+        ngrok: 'https://botalsepaisa-user-server.onrender.com',
         local: 'http://localhost:6000/api/admin'
     };
 
@@ -15,7 +15,7 @@
     // Get working API base
     async function getApiBase() {
         if (currentApiBase) return currentApiBase;
-        
+
         try {
             const response = await fetch(`${API_CONFIG.ngrok}/health`, {
                 headers: { 'ngrok-skip-browser-warning': 'true' }
@@ -27,7 +27,7 @@
         } catch (e) {
             console.log('Ngrok not available, trying localhost...');
         }
-        
+
         try {
             const response = await fetch(`${API_CONFIG.local}/health`);
             if (response.ok) {
@@ -37,7 +37,7 @@
         } catch (e) {
             console.log('Localhost not available');
         }
-        
+
         throw new Error('No API endpoints available');
     }
 
@@ -50,7 +50,7 @@
     async function loadUserTransactions() {
         try {
             showLoading();
-            
+
             const apiBase = await getApiBase();
             const userId = getCurrentUser();
             currentUser = userId;
@@ -105,7 +105,7 @@
     // Display transactions in table
     function displayTransactions(transactions) {
         const tbody = document.getElementById('history-table-body');
-        
+
         if (!tbody) {
             console.error('Table body not found');
             return;
@@ -119,7 +119,7 @@
         tbody.innerHTML = transactions.map((transaction, index) => {
             const dateReturned = formatDate(transaction.dateReturned);
             const processedDate = transaction.processedAt ? formatDate(transaction.processedAt) : 'Processing...';
-            const bottleId = transaction.bottleId.length > 15 ? 
+            const bottleId = transaction.bottleId.length > 15 ?
                 transaction.bottleId.substring(0, 15) + '...' : transaction.bottleId;
 
             // Determine reward display based on status
@@ -175,11 +175,11 @@
             backdrop-filter: blur(5px);
         `;
 
-        const statusIcon = transaction.status === 'completed' ? '✅' : 
-                          transaction.status === 'pending' ? '⏳' : '❌';
-        
-        const statusColor = transaction.status === 'completed' ? 'var(--success-green)' : 
-                           transaction.status === 'pending' ? 'var(--warning-orange)' : 'var(--error-red)';
+        const statusIcon = transaction.status === 'completed' ? '✅' :
+            transaction.status === 'pending' ? '⏳' : '❌';
+
+        const statusColor = transaction.status === 'completed' ? 'var(--success-green)' :
+            transaction.status === 'pending' ? 'var(--warning-orange)' : 'var(--error-red)';
 
         modal.innerHTML = `
             <div style="
@@ -279,7 +279,7 @@
             pending: transactions.filter(t => t.status === 'pending').length,
             rejected: transactions.filter(t => t.status === 'rejected').length,
             totalEarned: transactions.filter(t => t.status === 'completed')
-                                    .reduce((sum, t) => sum + t.reward, 0)
+                .reduce((sum, t) => sum + t.reward, 0)
         };
 
         // Add summary stats section if it doesn't exist
@@ -305,7 +305,7 @@
                     <span class="stat-label">Total Earned</span>
                 </div>
             `;
-            
+
             const container = document.querySelector('.container');
             const filterSection = document.querySelector('.filter-section');
             container.insertBefore(summarySection, filterSection.nextSibling);
@@ -351,7 +351,7 @@
     function clearFilters() {
         document.getElementById('date-filter').value = '';
         document.getElementById('status-filter').value = '';
-        
+
         filteredTransactions = [...allTransactions];
         displayTransactions(filteredTransactions);
         updateSummaryStats(allTransactions);
@@ -502,13 +502,13 @@
     // Initialize
     function init() {
         console.log('📊 Initializing User Transaction History...');
-        
+
         setupEventListeners();
         loadUserTransactions();
-        
+
         // Start auto-refresh after initial load
         setTimeout(startAutoRefresh, 5000);
-        
+
         console.log('✅ Transaction history initialized for user:', getCurrentUser());
     }
 

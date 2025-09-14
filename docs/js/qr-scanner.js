@@ -10,7 +10,7 @@
 
     // API Configuration
     const API_CONFIG = {
-        ngrok: 'https://c7c917092226.ngrok-free.app/api/admin',
+        ngrok: 'https://botalsepaisa-user-server.onrender.com',
         local: 'http://localhost:6000/api/admin'
     };
     let currentApiBase = null;
@@ -18,7 +18,7 @@
     // Get working API base
     async function getApiBase() {
         if (currentApiBase) return currentApiBase;
-        
+
         try {
             const response = await fetch(`${API_CONFIG.ngrok}/health`, {
                 headers: { 'ngrok-skip-browser-warning': 'true' }
@@ -30,7 +30,7 @@
         } catch (e) {
             console.log('Ngrok not available, trying localhost...');
         }
-        
+
         try {
             const response = await fetch(`${API_CONFIG.local}/health`);
             if (response.ok) {
@@ -40,7 +40,7 @@
         } catch (e) {
             console.log('Localhost not available');
         }
-        
+
         throw new Error('No API endpoints available');
     }
 
@@ -48,7 +48,7 @@
     function checkAuth() {
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
-        
+
         if (!token || !userId) {
             // Create guest user if no auth
             const guestId = 'user_' + Date.now();
@@ -65,7 +65,7 @@
         return localStorage.getItem('userId') || 'user_' + Date.now();
     }
 
-    window.goBack = function() {
+    window.goBack = function () {
         window.location.href = 'user.html';
     }
 
@@ -122,7 +122,7 @@
                 try {
                     await window.qrScanner.html5QrCode.stop();
                     await window.qrScanner.html5QrCode.clear();
-                } catch (e) {}
+                } catch (e) { }
             }
 
             // New instance
@@ -180,7 +180,7 @@
     // NEW WORKFLOW: QR SUCCESS - Send to backend
     async function onQRSuccess(qrText) {
         console.log('✅ QR detected:', qrText);
-        
+
         // Stop camera immediately
         if (window.qrScanner.isScanning) {
             try {
@@ -194,14 +194,14 @@
 
         // Get user ID
         const userId = getCurrentUserId();
-        
+
         // Show initial detection
         showInitialResult(qrText);
-        
+
         // Process QR with backend
         try {
             updateStatus('🔄 Verifying QR code...', 'loading');
-            
+
             const apiBase = await getApiBase();
             const response = await fetch(`${apiBase}/user-scan`, {
                 method: 'POST',
@@ -222,7 +222,7 @@
                 // SUCCESS - Show pending verification
                 updateStatus('✅ QR scanned successfully!', 'success');
                 showPendingVerification(result.bottle);
-                
+
                 // Emit socket event if connected
                 if (window.qrScanner.socket) {
                     window.qrScanner.socket.emit('user-qr-scanned', {
@@ -231,7 +231,7 @@
                         bottle: result.bottle
                     });
                 }
-                
+
             } else {
                 // ERROR - Show specific error
                 updateStatus('❌ QR scan failed', 'error');
@@ -249,7 +249,7 @@
     function showInitialResult(qrText) {
         const results = document.getElementById('scan-results');
         const display = document.getElementById('qr-data-display');
-        
+
         if (results && display) {
             display.innerHTML = `
                 <div style="text-align: center; padding: 2rem;">
@@ -273,7 +273,7 @@
         const display = document.getElementById('qr-data-display');
         if (display) {
             const rewardText = bottle.rewardText || (bottle.reward === 0.5 ? '50 paisa' : `₹${bottle.reward}`);
-            
+
             display.innerHTML = `
                 <div style="text-align: center; padding: 2.5rem; background: linear-gradient(135deg, #10b981, #34d399); border-radius: 1rem; color: white; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); animation: slideUp 0.5s ease;">
                     <div style="font-size: 4rem; margin-bottom: 1rem; animation: bounce 1.5s infinite;">🎉</div>
@@ -324,7 +324,7 @@
                 </div>
             `;
         }
-        
+
         // Play success sound and show confetti
         playSuccessSound();
         showConfetti();
@@ -337,7 +337,7 @@
             let title = 'Scan Failed';
             let actionButton = '';
             let suggestion = '';
-            
+
             if (errorType === 'already_completed') {
                 title = 'Already Rewarded';
                 suggestion = 'This bottle has already been processed and rewarded.';
@@ -377,7 +377,7 @@
                     </button>
                 `;
             }
-            
+
             display.innerHTML = `
                 <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #ef4444, #f87171); border-radius: 1rem; color: white; box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
@@ -396,7 +396,7 @@
                     </div>
                 </div>
             `;
-            
+
             const results = document.getElementById('scan-results');
             if (results) results.style.display = 'block';
         }
@@ -450,7 +450,7 @@
                     </button>
                 </div>
             `;
-            
+
             const results = document.getElementById('scan-results');
             if (results) results.style.display = 'block';
         }
@@ -462,17 +462,17 @@
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
-            
+
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
-            
+
             oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
             oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
             oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2);
-            
+
             gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-            
+
             oscillator.start(audioContext.currentTime);
             oscillator.stop(audioContext.currentTime + 0.5);
         } catch (error) {
@@ -493,9 +493,9 @@
                 confetti.style.pointerEvents = 'none';
                 confetti.style.zIndex = '9999';
                 confetti.style.animation = `confetti-fall ${Math.random() * 2 + 3}s linear forwards`;
-                
+
                 document.body.appendChild(confetti);
-                
+
                 setTimeout(() => {
                     if (document.body.contains(confetti)) {
                         document.body.removeChild(confetti);
@@ -515,10 +515,10 @@
         try {
             const tempScanner = new Html5Qrcode("qr-reader");
             const result = await tempScanner.scanFile(file, true);
-            
+
             console.log('📁 QR found in file:', result);
             onQRSuccess(result);
-            
+
         } catch (error) {
             updateStatus('❌ No QR code found in image', 'error');
             showErrorResult('No valid QR code found in the uploaded image. Please try with a clear image of your bottle QR code.', 'invalid_file');
@@ -528,12 +528,12 @@
     // Reset and restart - Manual only
     function resetAndRestart() {
         window.qrScanner.scannedData = null;
-        
+
         const results = document.getElementById('scan-results');
         if (results) results.style.display = 'none';
-        
+
         updateStatus('🔄 Ready for next scan...', 'info');
-        
+
         // Restart camera
         setTimeout(() => startCamera(), 500);
     }
@@ -563,17 +563,17 @@
     // Initialize
     async function init() {
         console.log('👤 Initializing User QR Scanner with New Workflow...');
-        
+
         if (!checkAuth()) return;
-        
+
         setupEvents();
         await initSocket();
-        
+
         updateStatus('📷 Starting camera automatically...', 'loading');
-        
+
         // Auto start camera
         setTimeout(() => startCamera(), 1000);
-        
+
         console.log('✅ User QR Scanner ready!');
     }
 

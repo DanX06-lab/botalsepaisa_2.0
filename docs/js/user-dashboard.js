@@ -1,6 +1,6 @@
 (() => {
   const TOKEN_KEY = 'token';
-  const API_BASE = 'http://localhost:5000/api';
+  const API_BASE = 'https://botalsepaisa-user-server.onrender.com';
   const POLL_MS = 10000;
 
   const els = {
@@ -29,7 +29,7 @@
 
     try {
       console.log('🔌 Initializing Socket.IO connection...');
-      
+
       const token = localStorage.getItem(TOKEN_KEY);
       socket = io({
         auth: { token },
@@ -40,16 +40,16 @@
         reconnectionAttempts: 5,
         reconnectionDelay: 2000
       });
-      
+
       socket.on('connect', () => {
         console.log('✅ Socket.IO connected successfully:', socket.id);
         isSocketConnected = true;
-        
+
         // Join user-specific room
         if (token) {
           socket.emit('join-user-room', { token });
         }
-        
+
         showNotification('🔗 Real-time updates connected', 'success');
       });
 
@@ -97,7 +97,7 @@
   // Enhanced notification system
   function showNotification(message, type = 'info') {
     console.log(`[${type.toUpperCase()}] ${message}`);
-    
+
     let notification = document.querySelector('.dashboard-notification');
     if (!notification) {
       notification = document.createElement('div');
@@ -115,12 +115,12 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         animation: slideIn 0.3s ease-out;
         font-size: 14px;
-        ${type === 'success' ? 'background: linear-gradient(135deg, #28a745, #20c997);' : 
-          type === 'error' ? 'background: linear-gradient(135deg, #dc3545, #e74c3c);' : 
-          type === 'warning' ? 'background: linear-gradient(135deg, #ffc107, #e0a800);' :
-          'background: linear-gradient(135deg, #17a2b8, #138496);'}
+        ${type === 'success' ? 'background: linear-gradient(135deg, #28a745, #20c997);' :
+          type === 'error' ? 'background: linear-gradient(135deg, #dc3545, #e74c3c);' :
+            type === 'warning' ? 'background: linear-gradient(135deg, #ffc107, #e0a800);' :
+              'background: linear-gradient(135deg, #17a2b8, #138496);'}
       `;
-      
+
       const style = document.createElement('style');
       style.textContent = `
         @keyframes slideIn {
@@ -131,10 +131,10 @@
       document.head.appendChild(style);
       document.body.appendChild(notification);
     }
-    
+
     notification.textContent = message;
     notification.style.display = 'block';
-    
+
     // Auto-hide notification
     setTimeout(() => {
       notification.style.opacity = '0';
@@ -148,28 +148,28 @@
   // Enhanced activity updates
   function updateActivity(data) {
     if (!els.activity) return;
-    
+
     // Remove loading message
-    const loadingItem = Array.from(els.activity.children).find(li => 
+    const loadingItem = Array.from(els.activity.children).find(li =>
       li.textContent.includes('Loading activity') || li.textContent.includes('No recent activity')
     );
     if (loadingItem) {
       loadingItem.remove();
     }
-    
+
     const li = document.createElement('li');
-    const dotClass = data.status === 'approved' ? 'green' : 
-                     data.status === 'rejected' ? 'red' : 'yellow';
-    
+    const dotClass = data.status === 'approved' ? 'green' :
+      data.status === 'rejected' ? 'red' : 'yellow';
+
     li.innerHTML = `
       <span class="dot ${dotClass}"></span>
-      QR ${data.status === 'approved' ? 'Approved ✅' : 
-           data.status === 'rejected' ? 'Rejected ❌' : 'Pending ⏳'} - 
+      QR ${data.status === 'approved' ? 'Approved ✅' :
+        data.status === 'rejected' ? 'Rejected ❌' : 'Pending ⏳'} - 
       ${new Date().toLocaleTimeString()}
     `;
-    
+
     els.activity.insertBefore(li, els.activity.firstChild);
-    
+
     // Keep only last 5 activity items
     while (els.activity.children.length > 5) {
       els.activity.removeChild(els.activity.lastChild);
@@ -178,7 +178,7 @@
 
   // Token helpers
   function getToken() { return localStorage.getItem(TOKEN_KEY); }
-  
+
   function logoutRedirect() {
     localStorage.removeItem(TOKEN_KEY);
     if (socket) socket.disconnect();
@@ -195,7 +195,7 @@
 
     try {
       const response = await fetch(`${API_BASE}${path}`, {
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
@@ -249,7 +249,7 @@
       setText(els.withdrawals, `₹${(metricsData.withdrawals ?? 0).toLocaleString()}`);
       setText(els.rewards, `₹${(metricsData.rewards ?? 0).toLocaleString()}`);
       setText(els.bottlesMeta, String(metricsData.bottlesReturned ?? 0));
-      
+
       // Update recycling rate
       if (typeof metricsData.recyclingRate === 'number') {
         setText(els.recyclingRate, `${Math.round(metricsData.recyclingRate)}%`);
@@ -268,7 +268,7 @@
       const response = await fetch(`${API_BASE}/qr/my-scans`, {
         headers: { 'Authorization': `Bearer ${getToken()}` }
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         displayRecentQRActivity(data.scans || []);
@@ -281,19 +281,19 @@
   // Display QR activity
   function displayRecentQRActivity(scans) {
     if (!els.activity) return;
-    
+
     els.activity.innerHTML = '';
-    
+
     if (scans.length === 0) {
       els.activity.innerHTML = '<li><span class="dot yellow"></span>No recent QR activity</li>';
       return;
     }
-    
+
     scans.slice(0, 3).forEach(scan => {
       const li = document.createElement('li');
-      const dotClass = scan.status === 'approved' ? 'green' : 
-                       scan.status === 'rejected' ? 'red' : 'yellow';
-      
+      const dotClass = scan.status === 'approved' ? 'green' :
+        scan.status === 'rejected' ? 'red' : 'yellow';
+
       li.innerHTML = `
         <span class="dot ${dotClass}"></span>
         QR ${scan.qrType || 'bottle_return'} - ${scan.status.toUpperCase()} 
@@ -312,10 +312,10 @@
         loadMetrics(),
         loadQRActivity()
       ]);
-      
+
       errorCount = 0;
       setTimeout(cycle, POLL_MS);
-      
+
     } catch (error) {
       console.error('❌ Update cycle error:', error);
       errorCount++;
@@ -339,18 +339,18 @@
       window.location.href = 'login.html';
       return;
     }
-    
+
     console.log('🚀 Initializing BotalSePaisa dashboard...');
-    
+
     // Initialize Socket.IO (if available)
     const socketInitialized = initSocket();
-    
+
     // Start polling cycle
     cycle();
-    
+
     console.log(`📡 Socket.IO: ${socketInitialized ? 'Initialized' : 'Not available'}`);
-    console.log(`🔄 Polling every ${POLL_MS/1000} seconds`);
-    
+    console.log(`🔄 Polling every ${POLL_MS / 1000} seconds`);
+
     // Show ready notification
     setTimeout(() => {
       showNotification('🚀 Dashboard ready!', 'success');
