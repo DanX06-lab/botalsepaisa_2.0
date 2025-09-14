@@ -141,6 +141,46 @@ html {
     background: var(--accent-amber-dark);
 }
 
+.upload-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.upload-btn {
+    background: linear-gradient(135deg, var(--accent-amber, #f59e0b), var(--accent-amber-dark, #d17a0b));
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 12px 24px rgba(245, 158, 11, .22);
+    transition: transform .18s ease, filter .2s ease;
+    align-items: center;
+}
+
+.upload-btn:hover {
+    filter: saturate(1.05) brightness(1.03);
+    transform: translateY(-1px)
+}
+
+.upload-name {
+    color: var(--text-muted, #9aa6bf);
+    font-weight: 700
+}
+
+.qr-preview {
+    margin-top: 8px;
+    max-width: 240px;
+    max-height: 240px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, .15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .35)
+}
+
 .scan-status {
     height: 2rem;
     font-weight: 600;
