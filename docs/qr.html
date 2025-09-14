@@ -38,7 +38,79 @@
         <p>© 2025 Botalsepaisa · Transforming waste into wealth</p>
     </footer>
 
-    <script src="scan-qr.js"></script>
+    <script>
+        console.log('🚀 Loading BotalSePaisa User QR Scanner...');
+
+        // Load Socket.IO first (optional for real-time updates)
+        function loadSocketIO() {
+            const script = document.createElement('script');
+            script.src = '/socket.io/socket.io.js';
+            script.onload = function () {
+                console.log('✅ Socket.IO loaded');
+                loadQRScanner();
+            };
+            script.onerror = function () {
+                console.warn('⚠️ Socket.IO not available, loading from CDN...');
+                const cdnScript = document.createElement('script');
+                cdnScript.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
+                cdnScript.onload = function () {
+                    console.log('✅ Socket.IO loaded from CDN');
+                    loadQRScanner();
+                };
+                cdnScript.onerror = function () {
+                    console.log('ℹ️ Socket.IO unavailable - continuing without real-time updates');
+                    loadQRScanner(); // Load anyway without Socket.IO
+                };
+                document.head.appendChild(cdnScript);
+            };
+            document.head.appendChild(script);
+        }
+
+        // Load the updated QR scanner
+        function loadQRScanner() {
+            const qrScript = document.createElement('script');
+            qrScript.src = 'js/user-qr-scanner.js'; // Your updated scanner file
+            qrScript.onload = function () {
+                console.log('✅ User QR Scanner loaded');
+                updateConnectionStatus('ready', '🎯 Ready to scan!');
+            };
+            qrScript.onerror = function () {
+                console.error('❌ Failed to load QR scanner');
+                updateConnectionStatus('error', '❌ Scanner failed to load');
+            };
+            document.head.appendChild(qrScript);
+        }
+
+        // Update connection status
+        function updateConnectionStatus(status, message) {
+            const statusDiv = document.getElementById('connection-status');
+            const statusIcon = document.getElementById('status-icon');
+            const statusText = document.getElementById('status-text');
+
+            if (statusIcon && statusText) {
+                statusText.textContent = message;
+
+                // Update icon based on status
+                if (status === 'ready') {
+                    statusIcon.textContent = '🎯';
+                    statusDiv.className = 'connection-status ready';
+                } else if (status === 'error') {
+                    statusIcon.textContent = '❌';
+                    statusDiv.className = 'connection-status error';
+                } else if (status === 'scanning') {
+                    statusIcon.textContent = '📱';
+                    statusDiv.className = 'connection-status scanning';
+                } else {
+                    statusIcon.textContent = '🔄';
+                    statusDiv.className = 'connection-status connecting';
+                }
+            }
+        }
+
+        // Start loading process
+        updateConnectionStatus('connecting', '🔄 Loading scanner...');
+        loadSocketIO();
+    </script>
 </body>
 
 </html>

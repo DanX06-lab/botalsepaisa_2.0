@@ -87,12 +87,76 @@ h2 {
     font-size: 1.8rem;
 }
 
+/* Quick status toolbar */
+.status-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+}
+
+.seg-wrap {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.seg-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-light);
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background .2s ease, transform .18s ease, color .2s ease, border-color .2s ease;
+}
+
+.seg-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--accent-amber);
+}
+
+.seg-btn.active {
+    background: linear-gradient(135deg, var(--accent-amber), var(--accent-amber-dark));
+    color: #111;
+    border-color: transparent;
+}
+
+/* CTA buttons */
+.btn {
+    display: inline-block;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: transform .18s ease, filter .2s ease, background .25s ease, color .25s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-amber), var(--accent-amber-dark));
+    color: #111;
+    box-shadow: 0 16px 28px rgba(245, 158, 11, .22);
+}
+
+.btn-primary:hover {
+    filter: saturate(1.05) brightness(1.03);
+    transform: translateY(-1px);
+}
+
+.btn[disabled] {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
 /* Filter Section */
 .filter-section {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem 2rem;
-    margin-bottom: 1.8rem;
+    margin-bottom: 1.2rem;
     align-items: center;
     opacity: 0;
     animation: fadeIn 0.8s ease 0.7s forwards;
@@ -155,10 +219,12 @@ td {
 }
 
 tbody tr:hover {
-    background: var(--mid-blue);
+    /* replacing undefined --mid-blue with a computed tint for subtle hover */
+    background: color-mix(in oklab, var(--panel-bg), #ffffff 6%);
     cursor: default;
 }
 
+/* Status chips */
 .status {
     padding: 0.2rem 0.7rem;
     border-radius: 12px;
@@ -248,10 +314,24 @@ tbody tr:hover {
     td:nth-of-type(5):before {
         content: "Reward Earned";
     }
+
+    /* Stack toolbar actions */
+    .status-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .seg-wrap {
+        justify-content: center;
+    }
+
+    .status-toolbar .btn {
+        width: 100%;
+    }
 }
 
 /* Animations */
-
 @keyframes fadeInUp {
     to {
         opacity: 1;

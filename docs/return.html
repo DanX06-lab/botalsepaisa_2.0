@@ -5,8 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Return History | Botalsepaisa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles/return.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap" rel="stylesheet" />
+    <!-- Optional: theme early init -->
+    <script>(function () { var t = localStorage.getItem('theme'); if (t) document.documentElement.setAttribute('data-theme', t); })();</script>
 </head>
 
 <body>
@@ -18,6 +20,18 @@
     <main class="container">
         <h2>Return History</h2>
 
+        <!-- Quick status filters + refresh -->
+        <div class="status-toolbar" role="group" aria-label="Quick status filters">
+            <div class="seg-wrap">
+                <button class="seg-btn active" data-status="">All</button>
+                <button class="seg-btn" data-status="completed">Completed</button>
+                <button class="seg-btn" data-status="pending">Pending</button>
+                <button class="seg-btn" data-status="rejected">Rejected</button>
+            </div>
+            <button id="refresh" class="btn btn-primary">Refresh Data</button>
+        </div>
+
+        <!-- Existing filters -->
         <section class="filter-section">
             <label for="date-filter">Filter by Date:</label>
             <input type="date" id="date-filter" name="date-filter" />
@@ -31,7 +45,7 @@
             <button id="clear-filters">Clear Filters</button>
         </section>
 
-        <table aria-label="Return History Table">
+        <table aria-label="Return History Table" id="history-table">
             <thead>
                 <tr>
                     <th>Bottle ID</th>
@@ -42,22 +56,21 @@
                 </tr>
             </thead>
             <tbody id="history-table-body">
-                <!-- Sample rows - replace with dynamic data -->
-                <tr>
+                <tr data-status="completed" data-date="2025-09-01">
                     <td>BTL123456</td>
                     <td>2025-09-01</td>
                     <td>Central Collection Center</td>
                     <td><span class="status completed">Completed</span></td>
                     <td>₹50</td>
                 </tr>
-                <tr>
+                <tr data-status="pending" data-date="2025-08-29">
                     <td>BTL654321</td>
                     <td>2025-08-29</td>
                     <td>North Recycling Hub</td>
                     <td><span class="status pending">Pending</span></td>
                     <td>₹30</td>
                 </tr>
-                <tr>
+                <tr data-status="rejected" data-date="2025-08-25">
                     <td>BTL789012</td>
                     <td>2025-08-25</td>
                     <td>East Bottle Depot</td>
@@ -71,6 +84,437 @@
     <footer class="footer">
         <p>© 2025 Botalsepaisa · Transforming waste into wealth</p>
     </footer>
+
+    <!-- <script>
+        // Elements
+        const tbody = document.getElementById('history-table-body');
+        const quickBtns = document.querySelectorAll('.seg-btn');
+        const statusSelect = document.getElementById('status-filter');
+        const dateInput = document.getElementById('date-filter');
+        const clearBtn = document.getElementById('clear-filters');
+        const refreshBtn = document.getElementById('refresh');
+
+        // Apply current filters
+        function applyFilters() {
+            const quickActive = document.querySelector('.seg-btn.active')?.dataset.status ?? '';
+            const selectVal = statusSelect.value.trim();
+            const effectiveStatus = quickActive !== '' ? quickActive : selectVal;
+            if (quickActive !== '') statusSelect.value = quickActive;
+
+            const selectedDate = dateInput.value; // '' or YYYY-MM-DD
+
+            Array.from(tbody.rows).forEach(row => {
+                const rs = row.getAttribute('data-status');
+                const rd = row.getAttribute('data-date');
+                const okStatus = !effectiveStatus || rs === effectiveStatus;
+                const okDate = !selectedDate || rd === selectedDate;
+                row.style.display = (okStatus && okDate) ? '' : 'none';
+            });
+        }
+
+        // Quick segmented buttons
+        quickBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                quickBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                statusSelect.value = btn.dataset.status || '';
+                applyFilters();
+            });
+        });
+
+        // Dropdown and date inputs
+        statusSelect.addEventListener('change', () => {
+            // When manual select is used, reset quick to "All"
+            quickBtns.forEach(b => b.classList.remove('active'));
+            quickBtns[0].classList.add('active');
+            applyFilters();
+        });
+        dateInput.addEventListener('change', applyFilters);
+
+        // Clear filters
+        clearBtn.addEventListener('click', () => {
+            dateInput.value = '';
+            statusSelect.value = '';
+            quickBtns.forEach(b => b.classList.remove('active'));
+            quickBtns[0].classList.add('active');
+            applyFilters();
+        });
+
+        // Refresh data (demo). Replace with real fetch to backend.
+        refreshBtn.addEventListener('click', async (e) => {
+            const btn = e.currentTarget;
+            btn.disabled = true;
+            const oldText = btn.textContent;
+            btn.textContent = 'Refreshing…';
+            try {
+                // Example fetch:
+                // const res = await fetch('/api/returns');
+                // const data = await res.json();
+                // tbody.innerHTML = ''; data.forEach(addRow); applyFilters();
+
+                // Demo: prepend a completed row with a pseudo-id
+                const stamp = Date.now().toString().slice(-6);
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-status', 'completed');
+                tr.setAttribute('data-date', '2025-09-02');
+                tr.innerHTML = `
+          <td>BTL${stamp}</td>
+          <td>2025-09-02</td>
+          <td>Central Collection Center</td>
+          <td><span class="status completed">Completed</span></td>
+          <td>₹10</td>
+        `;
+                tbody.prepend(tr);
+                applyFilters();
+            } catch (err) {
+                alert('Failed to refresh. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = oldText;
+            }
+        });
+
+        // Initial render
+        applyFilters();
+    </script> -->
+    <script>
+        (function () {
+            console.log('📊 User Transaction History Loading...');
+
+            // API Configuration
+            const API_CONFIG = {
+                ngrok: 'https://c7c917092226.ngrok-free.app/api/admin',
+                local: 'http://localhost:6000/api/admin'
+            };
+
+            let currentApiBase = null;
+            let allTransactions = [];
+            let filteredTransactions = [];
+
+            // Get working API base
+            async function getApiBase() {
+                if (currentApiBase) return currentApiBase;
+
+                try {
+                    const response = await fetch(`${API_CONFIG.local}/health`);
+                    if (response.ok) {
+                        currentApiBase = API_CONFIG.local;
+                        return currentApiBase;
+                    }
+                } catch (e) {
+                    console.log('Local API not available');
+                }
+
+                try {
+                    const response = await fetch(`${API_CONFIG.ngrok}/health`, {
+                        headers: { 'ngrok-skip-browser-warning': 'true' }
+                    });
+                    if (response.ok) {
+                        currentApiBase = API_CONFIG.ngrok;
+                        return currentApiBase;
+                    }
+                } catch (e) {
+                    console.log('Ngrok not available');
+                }
+
+                throw new Error('No API endpoints available');
+            }
+
+            // Get current user ID
+            function getCurrentUser() {
+                return localStorage.getItem('userId') || 'user_demo_123';
+            }
+
+            // Load user transactions
+            async function loadUserTransactions() {
+                try {
+                    updateConnectionStatus('loading', '🔄 Loading your transactions...');
+
+                    const userId = getCurrentUser();
+                    const apiBase = await getApiBase();
+
+                    console.log('📊 Loading transactions for user:', userId);
+
+                    const response = await fetch(`${apiBase}/all-bottles-history?userId=${userId}&limit=100`, {
+                        headers: {
+                            'Authorization': 'Bearer admin123',
+                            'Content-Type': 'application/json',
+                            'ngrok-skip-browser-warning': 'true'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success && data.bottles.length > 0) {
+                        allTransactions = data.bottles.map(bottle => ({
+                            bottleId: bottle.qrCode,
+                            dateReturned: bottle.scannedAt,
+                            processedAt: bottle.approvedAt || bottle.rejectedAt,
+                            location: 'BotalSePaisa Collection Center',
+                            status: bottle.status,
+                            reward: bottle.reward,
+                            rewardText: bottle.reward === 0.5 ? '₹0.50 (50p)' : `₹${bottle.reward.toFixed(2)}`,
+                            rejectionReason: bottle.rejectionReason,
+                            processingTimeMinutes: bottle.processingTimeMinutes,
+                            adminId: bottle.approvedBy
+                        }));
+
+                        filteredTransactions = [...allTransactions];
+                        displayTransactions(filteredTransactions);
+                        updateSummaryStats(allTransactions);
+                        updateConnectionStatus('ready', '✅ Data loaded successfully');
+
+                        console.log('✅ Loaded', allTransactions.length, 'transactions');
+                    } else {
+                        throw new Error('No transactions found');
+                    }
+
+                } catch (error) {
+                    console.error('❌ Error loading transactions:', error);
+                    updateConnectionStatus('error', '❌ Failed to load data');
+                    loadDemoData();
+                }
+            }
+
+            // Display transactions
+            function displayTransactions(transactions) {
+                const tbody = document.getElementById('history-table-body');
+                const recordCount = document.getElementById('record-count');
+
+                if (!tbody) return;
+
+                if (transactions.length === 0) {
+                    tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+                            <h3>No Transactions Yet</h3>
+                            <p>Start scanning bottle QR codes to see your transaction history!</p>
+                            <div style="margin-top: 1.5rem;">
+                                <a href="user-qr.html" style="
+                                    background: var(--accent-amber);
+                                    color: var(--dark-blue);
+                                    padding: 0.8rem 1.5rem;
+                                    border-radius: 0.8rem;
+                                    text-decoration: none;
+                                    font-weight: 600;
+                                    display: inline-block;
+                                ">📱 Scan Your First Bottle</a>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                    if (recordCount) recordCount.textContent = '0 transactions';
+                    return;
+                }
+
+                tbody.innerHTML = transactions.map((transaction, index) => {
+                    const dateReturned = new Date(transaction.dateReturned).toLocaleDateString('en-IN');
+                    const bottleId = transaction.bottleId.length > 15 ?
+                        transaction.bottleId.substring(0, 15) + '...' : transaction.bottleId;
+
+                    let rewardDisplay = '';
+                    if (transaction.status === 'completed') {
+                        rewardDisplay = `<span style="color: #10b981; font-weight: 700;">${transaction.rewardText}</span>`;
+                    } else if (transaction.status === 'pending') {
+                        rewardDisplay = `<span style="color: #f59e0b; font-weight: 700;">${transaction.rewardText} (Pending)</span>`;
+                    } else {
+                        rewardDisplay = `<span style="color: #ef4444; font-weight: 700;">₹0 (Rejected)</span>`;
+                    }
+
+                    return `
+                    <tr style="cursor: pointer;" onclick="showTransactionDetails('${transaction.bottleId}')">
+                        <td title="${transaction.bottleId}">${bottleId}</td>
+                        <td>${dateReturned}</td>
+                        <td>${transaction.location}</td>
+                        <td><span class="status ${transaction.status}">${transaction.status}</span></td>
+                        <td>${rewardDisplay}</td>
+                    </tr>
+                `;
+                }).join('');
+
+                if (recordCount) recordCount.textContent = `${transactions.length} transactions`;
+            }
+
+            // Update summary stats
+            function updateSummaryStats(transactions) {
+                const stats = {
+                    total: transactions.length,
+                    completed: transactions.filter(t => t.status === 'completed').length,
+                    pending: transactions.filter(t => t.status === 'pending').length,
+                    rejected: transactions.filter(t => t.status === 'rejected').length,
+                    totalEarned: transactions.filter(t => t.status === 'completed')
+                        .reduce((sum, t) => sum + t.reward, 0)
+                };
+
+                // Add summary stats section if it doesn't exist
+                let summarySection = document.querySelector('.summary-stats');
+                if (!summarySection) {
+                    summarySection = document.createElement('div');
+                    summarySection.className = 'summary-stats';
+                    summarySection.innerHTML = `
+                    <div class="stat-card success">
+                        <span class="stat-value" id="completed-count">${stats.completed}</span>
+                        <span class="stat-label">Completed</span>
+                    </div>
+                    <div class="stat-card warning">
+                        <span class="stat-value" id="pending-count">${stats.pending}</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                    <div class="stat-card error">
+                        <span class="stat-value" id="rejected-count">${stats.rejected}</span>
+                        <span class="stat-label">Rejected</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value" id="total-earned">₹${stats.totalEarned.toFixed(2)}</span>
+                        <span class="stat-label">Total Earned</span>
+                    </div>
+                `;
+
+                    const container = document.querySelector('.container');
+                    const filterSection = document.querySelector('.filter-section');
+                    container.insertBefore(summarySection, filterSection);
+                }
+            }
+
+            // Show transaction details
+            window.showTransactionDetails = function (bottleId) {
+                const transaction = allTransactions.find(t => t.bottleId === bottleId);
+                if (!transaction) return;
+
+                alert(`
+    Bottle Details:
+    
+    🔖 Bottle ID: ${transaction.bottleId}
+    📅 Scanned: ${new Date(transaction.dateReturned).toLocaleString('en-IN')}
+    📊 Status: ${transaction.status.toUpperCase()}
+    💰 Reward: ${transaction.status === 'rejected' ? '₹0' : transaction.rewardText}
+    ${transaction.rejectionReason ? `\n❌ Rejection Reason: ${transaction.rejectionReason}` : ''}
+    ${transaction.adminId ? `\n👨‍💼 Processed By: ${transaction.adminId}` : ''}
+            `);
+            };
+
+            // Apply filters
+            function applyFilters() {
+                const dateFilter = document.getElementById('date-filter').value;
+                const statusFilter = document.getElementById('status-filter').value;
+
+                filteredTransactions = allTransactions.filter(transaction => {
+                    let matches = true;
+
+                    if (dateFilter) {
+                        const transactionDate = new Date(transaction.dateReturned).toISOString().split('T')[0];
+                        matches = matches && (transactionDate === dateFilter);
+                    }
+
+                    if (statusFilter) {
+                        matches = matches && (transaction.status === statusFilter);
+                    }
+
+                    return matches;
+                });
+
+                displayTransactions(filteredTransactions);
+                updateSummaryStats(filteredTransactions);
+            }
+
+            // Clear filters
+            function clearFilters() {
+                document.getElementById('date-filter').value = '';
+                document.getElementById('status-filter').value = '';
+
+                filteredTransactions = [...allTransactions];
+                displayTransactions(filteredTransactions);
+                updateSummaryStats(allTransactions);
+            }
+
+            // Load demo data
+            function loadDemoData() {
+                const now = Date.now();
+                const demoTransactions = [
+                    {
+                        bottleId: 'BSP_S_1757757154964_1',
+                        dateReturned: new Date(now - 86400000),
+                        location: 'BotalSePaisa Collection Center',
+                        status: 'completed',
+                        reward: 0.5,
+                        rewardText: '₹0.50 (50p)',
+                        adminId: 'admin1'
+                    },
+                    {
+                        bottleId: 'BSP_M_1757757154964_2',
+                        dateReturned: new Date(now - 172800000),
+                        location: 'BotalSePaisa Collection Center',
+                        status: 'pending',
+                        reward: 1.00,
+                        rewardText: '₹1.00'
+                    }
+                ];
+
+                allTransactions = demoTransactions;
+                filteredTransactions = [...allTransactions];
+                displayTransactions(filteredTransactions);
+                updateSummaryStats(allTransactions);
+                updateConnectionStatus('ready', '✅ Demo data loaded');
+            }
+
+            // Update connection status
+            function updateConnectionStatus(status, message) {
+                const statusDiv = document.getElementById('connection-status');
+                const statusIcon = document.getElementById('status-icon');
+                const statusText = document.getElementById('status-text');
+
+                if (statusIcon && statusText) {
+                    statusText.textContent = message;
+
+                    if (status === 'ready') {
+                        statusIcon.textContent = '✅';
+                        statusDiv.className = 'connection-status ready';
+                    } else if (status === 'error') {
+                        statusIcon.textContent = '❌';
+                        statusDiv.className = 'connection-status error';
+                    } else if (status === 'loading') {
+                        statusIcon.textContent = '🔄';
+                        statusDiv.className = 'connection-status loading';
+                    }
+                }
+            }
+
+            // Setup event listeners
+            function setupEventListeners() {
+                document.getElementById('date-filter')?.addEventListener('change', applyFilters);
+                document.getElementById('status-filter')?.addEventListener('change', applyFilters);
+                document.getElementById('clear-filters')?.addEventListener('click', clearFilters);
+                document.getElementById('refresh-data')?.addEventListener('click', loadUserTransactions);
+            }
+
+            // Initialize
+            function init() {
+                setupEventListeners();
+                loadUserTransactions();
+
+                // Hide connection status after 5 seconds if successful
+                setTimeout(() => {
+                    const statusDiv = document.getElementById('connection-status');
+                    if (statusDiv && statusDiv.classList.contains('ready')) {
+                        statusDiv.style.display = 'none';
+                    }
+                }, 5000);
+            }
+
+            // Start when ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+        })();
+    </script>
 </body>
 
 </html>
