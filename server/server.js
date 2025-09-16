@@ -47,33 +47,68 @@ app.use(express.json());
 
 // CORS configuration
 const allowedOrigins = [
+  'https://danx06-lab.github.io',  // GitHub Pages domain
   'https://botalsepaisa-2-0.onrender.com',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   'http://localhost:5000',
   'http://127.0.0.1:5000',
   'http://localhost:5500',
-  'http://127.0.0.1:5500'
+  'http://127.0.0.1:5500',
+  'http://localhost:8000',
+  'http://127.0.0.1:8000'
 ];
 
-const corsOptions = {
+// Log incoming origins for debugging
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  console.log('Incoming request from origin:', origin);
+  console.log('Request method:', req.method);
+  console.log('Request path:', req.path);
+  next();
+});
+
+// Configure CORS with more permissive settings
+app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Check if the origin is in the allowed list or contains 'github.io'
+    if (allowedOrigins.includes(origin) || 
+        origin.endsWith('.github.io') ||
+        origin.includes('localhost') || 
+        origin.includes('127.0.0.1')) {
+      return callback(null, true);
     }
+    
+    console.warn('Blocked by CORS:', origin);
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['set-cookie']
-};
-
-app.use(cors(corsOptions));
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'Origin',
+    'Access-Control-Allow-Headers',
+    'Access-Control-Request-Method'
+  ],
+  exposedHeaders: [
+    'Content-Length',
+    'X-Foo',
+    'X-Bar',
+    'set-cookie'
+  ],
+  maxAge: 86400, // 24 hours
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}));
 
 // Handle preflight requests
-app.options('*', cors(corsOptions));
+app.options('*', cors());
 
 // Serve static files
 const frontendPath = path.join(__dirname, '../docs');

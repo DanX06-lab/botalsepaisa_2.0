@@ -63,15 +63,25 @@ signupForm?.addEventListener('submit', async (e) => {
     console.log('Sending signup request with:', payload);
 
     try {
+        console.log('Sending signup request to:', `${API_BASE}/api/users/signup`);
         const res = await fetch(`${API_BASE}/api/users/signup`, {
             method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'Origin': window.location.origin
             },
-            body: JSON.stringify(payload),
-            credentials: 'include',
-            mode: 'cors'
+            body: JSON.stringify(payload)
+        }).catch(error => {
+            console.error('Fetch error:', error);
+            throw error;
+        });
+        
+        console.log('Signup response headers:');
+        res.headers.forEach((value, key) => {
+            console.log(`${key}: ${value}`);
         });
 
         console.log('Response status:', res.status);
@@ -131,15 +141,25 @@ if (loginForm) {
             }
 
             try {
+                console.log('Sending login request to:', `${API_BASE}/api/users/login`);
                 const response = await fetch(`${API_BASE}/api/users/login`, {
                     method: 'POST',
+                    mode: 'cors',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'Origin': window.location.origin
                     },
-                    body: JSON.stringify(payload),
-                    credentials: 'include',
-                    mode: 'cors'
+                    body: JSON.stringify(payload)
+                }).catch(error => {
+                    console.error('Fetch error:', error);
+                    throw error;
+                });
+                
+                console.log('Response headers:');
+                response.headers.forEach((value, key) => {
+                    console.log(`${key}: ${value}`);
                 });
 
                 console.log('Login response status:', response.status);
