@@ -10,7 +10,7 @@
 
     // API Configuration
     const API_CONFIG = {
-        ngrok: 'https://botalsepaisa-user-server.onrender.com',
+        ngrok: 'https://botalsepaisa-2-0.onrender.com',
         local: 'http://localhost:6000/api/admin'
     };
     let currentApiBase = null;

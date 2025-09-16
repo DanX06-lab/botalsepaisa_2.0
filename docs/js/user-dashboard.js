@@ -1,6 +1,6 @@
 (() => {
   const TOKEN_KEY = 'token';
-  const API_BASE = 'http://localhost:5000/api';
+  const API_BASE = 'https://botalsepaisa-2-0.onrender.com';
   const POLL_MS = 10000;
 
   const els = {

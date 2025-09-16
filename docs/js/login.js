@@ -11,7 +11,7 @@ const signupMessage = document.getElementById('signupMessage');
 const loginMessage = document.getElementById('loginMessage');
 
 // API Configuration
-const API_BASE = 'http://localhost:5000/api/users';
+const API_BASE = 'https://botalsepaisa-2-0.onrender.com';
 
 // Debug: Log all elements to verify they exist
 console.log('Elements:', {
@@ -50,31 +50,31 @@ if (loginBtn) {
 signupForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     setMsg(signupMessage, '', '');
-    
+
     console.log('Signup form submitted');
-    
+
     const formData = new FormData(signupForm);
     const payload = {
         name: formData.get('name')?.trim(),
         email: formData.get('email')?.trim().toLowerCase(),
         password: formData.get('password')
     };
-    
+
     console.log('Sending signup request with:', payload);
 
     try {
         const res = await fetch(`${API_BASE}/signup`, {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
             body: JSON.stringify(payload),
             credentials: 'include' // Important for cookies if using them
         });
-        
+
         console.log('Response status:', res.status);
-        
+
         // Handle non-JSON responses
         const contentType = res.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
@@ -82,18 +82,18 @@ signupForm?.addEventListener('submit', async (e) => {
             console.error('Non-JSON response:', text);
             throw new Error('Server returned non-JSON response');
         }
-        
+
         const result = await res.json();
         console.log('Server response:', result);
-        
+
         if (res.ok) {
             setMsg(signupMessage, result.message || 'Signup successful', 'success');
             signupForm.reset();
             // Small delay before switching to login
             setTimeout(() => container?.classList.remove('active'), 1500);
         } else {
-            const errorMsg = result.message || 
-                           (result.errors ? JSON.stringify(result.errors) : 'Signup failed');
+            const errorMsg = result.message ||
+                (result.errors ? JSON.stringify(result.errors) : 'Signup failed');
             setMsg(signupMessage, errorMsg, 'error');
         }
     } catch (error) {
@@ -107,20 +107,20 @@ if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         console.log('Login form submit event triggered');
-        
+
         try {
             // Clear previous messages
             setMsg(loginMessage, 'Logging in...', 'info');
-            
+
             // Get form data
             const formData = new FormData(loginForm);
             const payload = {
                 email: formData.get('email')?.trim().toLowerCase(),
                 password: formData.get('password')
             };
-            
+
             console.log('Sending login request with:', { email: payload.email });
-            
+
             // Show loading state
             const submitBtn = loginForm.querySelector('button[type="submit"]');
             const originalBtnText = submitBtn?.textContent;
@@ -128,24 +128,24 @@ if (loginForm) {
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Logging in...';
             }
-            
+
             try {
                 const response = await fetch(`${API_BASE}/login`, {
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify(payload),
                     credentials: 'include'
                 });
-                
+
                 console.log('Login response status:', response.status);
-                
+
                 // Handle response
                 const contentType = response.headers.get('content-type');
                 let result;
-                
+
                 if (contentType && contentType.includes('application/json')) {
                     result = await response.json();
                     console.log('Login response:', result);
@@ -154,7 +154,7 @@ if (loginForm) {
                     console.error('Non-JSON login response:', text);
                     throw new Error('Server returned non-JSON response');
                 }
-                
+
                 if (response.ok) {
                     if (result.token) {
                         // Store token and user data
@@ -162,10 +162,10 @@ if (loginForm) {
                         if (result.user?.name) {
                             localStorage.setItem('userName', result.user.name);
                         }
-                        
+
                         // Show success message
                         setMsg(loginMessage, 'Login successful! Redirecting...', 'success');
-                        
+
                         // Redirect after a short delay
                         setTimeout(() => {
                             window.location.href = 'user.html';
@@ -175,13 +175,13 @@ if (loginForm) {
                     }
                 } else {
                     // Handle API errors
-                    const errorMessage = result.message || 
-                                      result.error || 
-                                      `Login failed with status ${response.status}`;
-                    
+                    const errorMessage = result.message ||
+                        result.error ||
+                        `Login failed with status ${response.status}`;
+
                     console.error('Login failed:', errorMessage);
                     setMsg(loginMessage, errorMessage, 'error');
-                    
+
                     // Highlight problematic fields
                     if (result.errors) {
                         Object.entries(result.errors).forEach(([field, message]) => {
@@ -199,8 +199,8 @@ if (loginForm) {
                 }
             } catch (error) {
                 console.error('Network/Request error:', error);
-                setMsg(loginMessage, 
-                    `Error: ${error.message || 'Failed to connect to server. Please try again.'}`, 
+                setMsg(loginMessage,
+                    `Error: ${error.message || 'Failed to connect to server. Please try again.'}`,
                     'error'
                 );
             }
