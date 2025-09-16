@@ -63,14 +63,15 @@ signupForm?.addEventListener('submit', async (e) => {
     console.log('Sending signup request with:', payload);
 
     try {
-        const res = await fetch(`${API_BASE}/signup`, {
+        const res = await fetch(`${API_BASE}/api/users/signup`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
             body: JSON.stringify(payload),
-            credentials: 'include' // Important for cookies if using them
+            credentials: 'include',
+            mode: 'cors'
         });
 
         console.log('Response status:', res.status);
@@ -130,14 +131,15 @@ if (loginForm) {
             }
 
             try {
-                const response = await fetch(`${API_BASE}/login`, {
+                const response = await fetch(`${API_BASE}/api/users/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify(payload),
-                    credentials: 'include'
+                    credentials: 'include',
+                    mode: 'cors'
                 });
 
                 console.log('Login response status:', response.status);
