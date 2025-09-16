@@ -17,6 +17,12 @@
     --social-bg: rgba(255, 255, 255, 0.04);
     --social-border: rgba(34, 51, 71, 1);
     --social-color: #dbeaea;
+    
+    /* Message colors */
+    --error-color: #ff4444;
+    --success-color: #4caf50;
+    --warning-color: #ff9800;
+    --info-color: #2196f3;
 }
 
 * {
@@ -73,7 +79,6 @@ body {
     color: var(--accent-hover);
     text-decoration: underline;
 }
-
 
 .container {
     position: relative;
@@ -146,27 +151,61 @@ h2 {
     text-align: center;
 }
 
-input {
-    width: 100%;
-    border-radius: 12px;
-    border: 1px solid var(--input-border);
+.form-container form input {
     background-color: var(--input-bg);
-    padding: 0.75rem 1rem;
+    border: 1px solid var(--input-border);
+    padding: 12px 15px;
+    margin: 8px 0;
+    width: 100%;
+    border-radius: 6px;
     color: var(--text-color);
-    font-size: 1rem;
-    margin-bottom: 1.25rem;
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
 }
 
-input::placeholder {
-    color: #9ba1ab;
+/* Message styles */
+.message {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+    display: none;
 }
 
-input:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 8px var(--accent-color);
-    background-color: #12293a;
+.message.error {
+    background-color: rgba(255, 68, 68, 0.1);
+    color: var(--error-color);
+    border-left: 3px solid var(--error-color);
+    display: block;
+}
+
+.message.success {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--success-color);
+    border-left: 3px solid var(--success-color);
+    display: block;
+}
+
+/* Form validation */
+input:invalid {
+    border-color: var(--error-color) !important;
+}
+
+input:focus:invalid {
+    box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.2);
+}
+
+/* Loading state */
+button[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Error state for inputs */
+.input-error {
+    border-color: var(--error-color) !important;
+    background-color: rgba(255, 68, 68, 0.05) !important;
 }
 
 .social-icons {

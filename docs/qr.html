@@ -17,7 +17,7 @@
     <main class="main-container">
 
         <section class="qr-scanner-section">
-            <div class="scanner-frame" id="scanner-frame">
+            <div class="scanner-frame" id="qr-reader">
                 <!-- Camera feed will be injected here by JS or QR library -->
                 <p class="scanner-placeholder">Camera preview will appear here</p>
             </div>
@@ -75,19 +75,35 @@
             document.head.appendChild(script);
         }
 
-        // Load the updated QR scanner
+        // Load the html5-qrcode library
         function loadQRScanner() {
-            const qrScript = document.createElement('script');
-            qrScript.src = 'js/user-qr-scanner.js'; // Your updated scanner file
-            qrScript.onload = function () {
-                console.log('✅ User QR Scanner loaded');
-                updateConnectionStatus('ready', '🎯 Ready to scan!');
+            // First load html5-qrcode
+            const html5QrScript = document.createElement('script');
+            html5QrScript.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
+            html5QrScript.onload = function() {
+                console.log(' html5-qrcode loaded');
+                // Then load our custom scanner
+                const qrScript = document.createElement('script');
+                qrScript.src = 'js/qr-scanner.js';
+                qrScript.onload = function() {
+                    console.log(' User QR Scanner loaded');
+                    updateConnectionStatus('ready', ' Ready to scan!');
+                    // Initialize the scanner after it's loaded
+                    if (window.qrScanner && window.qrScanner.init) {
+                        window.qrScanner.init();
+                    }
+                };
+                qrScript.onerror = function() {
+                    console.error(' Failed to load QR scanner');
+                    updateConnectionStatus('error', ' Scanner script failed to load');
+                };
+                document.head.appendChild(qrScript);
             };
-            qrScript.onerror = function () {
-                console.error('❌ Failed to load QR scanner');
-                updateConnectionStatus('error', '❌ Scanner failed to load');
+            html5QrScript.onerror = function() {
+                console.error(' Failed to load html5-qrcode');
+                updateConnectionStatus('error', ' QR library failed to load');
             };
-            document.head.appendChild(qrScript);
+            document.head.appendChild(html5QrScript);
         }
 
         // Update connection status

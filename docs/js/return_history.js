@@ -3,7 +3,7 @@
 
     // API Configuration
     const API_CONFIG = {
-        ngrok: 'https://botalsepaisa-user-server.onrender.com',
+        // ngrok: 'https://botalsepaisa-user-server.onrender.com',
         local: 'http://localhost:6000/api/admin'
     };
 
@@ -57,48 +57,21 @@
 
             console.log('📊 Loading transactions for user:', userId);
 
-            // Fetch user's transaction history
-            const response = await fetch(`${apiBase}/all-bottles-history?userId=${userId}&limit=100`, {
-                headers: {
-                    'Authorization': 'Bearer admin123',
-                    'Content-Type': 'application/json',
-                    'ngrok-skip-browser-warning': 'true'
-                }
-            });
+            // Clear any existing transactions
+            allTransactions = [];
+            filteredTransactions = [];
+            displayTransactions(filteredTransactions);
+            updateSummaryStats(allTransactions);
 
-            if (!response.ok) {
-                throw new Error(`API Error: ${response.status}`);
-            }
+            // Show empty state since we don't have a working API endpoint yet
+            showEmptyState();
 
-            const data = await response.json();
-
-            if (data.success) {
-                allTransactions = data.bottles.map(bottle => ({
-                    bottleId: bottle.qrCode,
-                    dateReturned: bottle.scannedAt,
-                    processedAt: bottle.approvedAt || bottle.rejectedAt,
-                    location: 'BotalSePaisa Collection Center',
-                    status: bottle.status,
-                    reward: bottle.reward,
-                    rewardText: bottle.reward === 0.5 ? '₹0.50 (50p)' : `₹${bottle.reward.toFixed(2)}`,
-                    rejectionReason: bottle.rejectionReason,
-                    processingTimeMinutes: bottle.processingTimeMinutes,
-                    adminId: bottle.approvedBy
-                }));
-
-                filteredTransactions = [...allTransactions];
-                displayTransactions(filteredTransactions);
-                updateSummaryStats(allTransactions);
-
-                console.log('✅ Loaded', allTransactions.length, 'transactions');
-            } else {
-                throw new Error(data.message || 'Failed to load transactions');
-            }
+            console.log('ℹ️  No transactions to display - API endpoint not implemented');
 
         } catch (error) {
             console.error('❌ Error loading transactions:', error);
-            showError(error.message);
-            loadDemoData(); // Fallback to demo data
+            showError('Failed to load transaction history');
+            showEmptyState();
         }
     }
 
@@ -271,7 +244,7 @@
         });
     }
 
-    // Update summary statistics
+    // Update summary statistics and count badges
     function updateSummaryStats(transactions) {
         const stats = {
             total: transactions.length,
@@ -311,11 +284,25 @@
             container.insertBefore(summarySection, filterSection.nextSibling);
         }
 
-        // Update values
+        // Update summary card values
         document.getElementById('completed-count').textContent = stats.completed;
         document.getElementById('pending-count').textContent = stats.pending;
         document.getElementById('rejected-count').textContent = stats.rejected;
         document.getElementById('total-earned').textContent = `₹${stats.totalEarned.toFixed(2)}`;
+
+        // Update filter button badges
+        const updateBadge = (status, count) => {
+            const badge = document.querySelector(`.seg-btn[data-status="${status}"] .count-badge`);
+            if (badge) {
+                badge.textContent = count;
+                badge.dataset.originalCount = count; // Store original count for filtering
+            }
+        };
+
+        updateBadge('', stats.total);
+        updateBadge('completed', stats.completed);
+        updateBadge('pending', stats.pending);
+        updateBadge('rejected', stats.rejected);
 
         console.log('📊 Summary stats:', stats);
     }
@@ -324,21 +311,14 @@
     function applyFilters() {
         const dateFilter = document.getElementById('date-filter').value;
         const statusFilter = document.getElementById('status-filter').value;
+        const activeButton = document.querySelector('.seg-btn.active');
+        const activeStatus = activeButton ? activeButton.dataset.status : '';
 
         filteredTransactions = allTransactions.filter(transaction => {
-            let matchesDate = true;
-            let matchesStatus = true;
-
-            if (dateFilter) {
-                const transactionDate = new Date(transaction.dateReturned).toISOString().split('T')[0];
-                matchesDate = transactionDate === dateFilter;
-            }
-
-            if (statusFilter) {
-                matchesStatus = transaction.status === statusFilter;
-            }
-
-            return matchesDate && matchesStatus;
+            const matchesDate = !dateFilter || formatDate(transaction.dateReturned) === dateFilter;
+            const matchesStatus = !statusFilter || transaction.status === statusFilter;
+            const matchesActiveStatus = !activeStatus || transaction.status === activeStatus;
+            return matchesDate && matchesStatus && matchesActiveStatus;
         });
 
         displayTransactions(filteredTransactions);
@@ -433,52 +413,15 @@
         }
     }
 
-    // Load demo data as fallback
+    // Load demo data as fallback (empty by default)
     function loadDemoData() {
-        const now = Date.now();
-        const demoTransactions = [
-            {
-                bottleId: 'BSP_S_1757757154964_1',
-                dateReturned: new Date(now - 86400000), // 1 day ago
-                processedAt: new Date(now - 86000000),
-                location: 'BotalSePaisa Collection Center',
-                status: 'completed',
-                reward: 0.5,
-                rewardText: '₹0.50 (50p)',
-                processingTimeMinutes: 7,
-                adminId: 'admin1'
-            },
-            {
-                bottleId: 'BSP_M_1757757154964_2',
-                dateReturned: new Date(now - 172800000), // 2 days ago
-                processedAt: null,
-                location: 'BotalSePaisa Collection Center',
-                status: 'pending',
-                reward: 1.00,
-                rewardText: '₹1.00',
-                processingTimeMinutes: null,
-                adminId: null
-            },
-            {
-                bottleId: 'BSP_XL_1757757154964_3',
-                dateReturned: new Date(now - 259200000), // 3 days ago
-                processedAt: new Date(now - 258600000),
-                location: 'BotalSePaisa Collection Center',
-                status: 'rejected',
-                reward: 0,
-                rewardText: '₹2.00',
-                rejectionReason: 'Physical bottle not received at collection center',
-                processingTimeMinutes: 10,
-                adminId: 'admin2'
-            }
-        ];
-
-        allTransactions = demoTransactions;
-        filteredTransactions = [...allTransactions];
+        allTransactions = [];
+        filteredTransactions = [];
         displayTransactions(filteredTransactions);
         updateSummaryStats(allTransactions);
+        showEmptyState();
 
-        console.log('📊 Demo data loaded');
+        console.log('📊 Demo data initialized (empty)');
     }
 
     // Setup event listeners
