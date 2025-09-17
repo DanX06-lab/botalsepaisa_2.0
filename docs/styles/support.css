@@ -242,6 +242,13 @@ section h3 {
     line-height: 1.4;
 }
 
+.footer {
+    margin-top: 2rem;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.8rem;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
     main.container {
