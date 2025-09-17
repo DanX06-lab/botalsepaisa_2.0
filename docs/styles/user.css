@@ -34,6 +34,19 @@ body {
 }
 
 /* Sidebar */
+.sidebar a {
+    text-decoration: none;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    display: block;
+    padding: 0.5rem 0;
+}
+
+.sidebar a:hover {
+    color: var(--accent-amber);
+    transform: translateX(3px);
+}
+
 .sidebar {
     background: var(--dark-blue);
     color: var(--white);
