@@ -1,9 +1,9 @@
 (() => {
   const TOKEN_KEY = 'token';
+  const _hostname = window.location.hostname;
   const API_BASE =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1"
-    ? "http://localhost:5000"
+  (_hostname === "localhost" || _hostname === "127.0.0.1" || _hostname.includes("ngrok"))
+    ? window.location.origin
     : "https://botalsepaisa-2-0.onrender.com";
   const POLL_MS = 10000;
 
@@ -11,11 +11,9 @@
     nameSpan: document.querySelector('#user-name'),
     bottles: document.querySelector('#bottles-returned'),
     upi: document.querySelector('#total-earnings'),
-    rank: document.querySelector('#user-rank'),
     balance: document.querySelector('#current-balance'),
-    withdrawals: document.querySelector('#total-withdrawals-meta'),
-    rewards: document.querySelector('#total-rewards'),
-    bottlesMeta: document.querySelector('#bottles-meta'),
+    withdrawBtn: document.querySelector('#withdraw-btn'),
+    withdrawMsg: document.querySelector('#withdraw-msg'),
     recyclingRate: document.querySelector('#recycling-rate'),
     activity: document.querySelector('#activity-list')
   };
@@ -79,7 +77,7 @@
       socket.on('qr-status-update', (data) => {
         console.log('📱 Received QR update:', data);
         showNotification(data.message, data.status === 'approved' ? 'success' : 'info');
-        updateActivity(data);
+        loadQRActivity();
         loadMetrics(); // Immediately reload metrics
       });
 
@@ -119,10 +117,10 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         animation: slideIn 0.3s ease-out;
         font-size: 14px;
-        ${type === 'success' ? 'background: linear-gradient(135deg, #28a745, #20c997);' :
-          type === 'error' ? 'background: linear-gradient(135deg, #dc3545, #e74c3c);' :
-            type === 'warning' ? 'background: linear-gradient(135deg, #ffc107, #e0a800);' :
-              'background: linear-gradient(135deg, #17a2b8, #138496);'}
+        ${type === 'success' ? 'background: linear-gradient(135deg, #00D68F, #00b377);' :
+          type === 'error' ? 'background: linear-gradient(135deg, #FF3D71, #e0285a);' :
+            type === 'warning' ? 'background: linear-gradient(135deg, #FFAA00, #e69900);' :
+              'background: linear-gradient(135deg, #0095FF, #0077cc);'}
       `;
 
       const style = document.createElement('style');
@@ -149,37 +147,6 @@
     }, 5000);
   }
 
-  // Enhanced activity updates
-  function updateActivity(data) {
-    if (!els.activity) return;
-
-    // Remove loading message
-    const loadingItem = Array.from(els.activity.children).find(li =>
-      li.textContent.includes('Loading activity') || li.textContent.includes('No recent activity')
-    );
-    if (loadingItem) {
-      loadingItem.remove();
-    }
-
-    const li = document.createElement('li');
-    const dotClass = data.status === 'approved' ? 'green' :
-      data.status === 'rejected' ? 'red' : 'yellow';
-
-    li.innerHTML = `
-      <span class="dot ${dotClass}"></span>
-      QR ${data.status === 'approved' ? 'Approved ✅' :
-        data.status === 'rejected' ? 'Rejected ❌' : 'Pending ⏳'} - 
-      ${new Date().toLocaleTimeString()}
-    `;
-
-    els.activity.insertBefore(li, els.activity.firstChild);
-
-    // Keep only last 5 activity items
-    while (els.activity.children.length > 5) {
-      els.activity.removeChild(els.activity.lastChild);
-    }
-  }
-
   // Token helpers
   function getToken() { return localStorage.getItem(TOKEN_KEY); }
 
@@ -201,7 +168,8 @@
       const response = await fetch(`${API_BASE}${path}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true'
         }
       });
 
@@ -228,7 +196,7 @@
 
   // Load user profile
   async function loadProfile() {
-    const profileData = await apiGet('/users/me');
+    const profileData = await apiGet('/api/users/me');
     if (profileData?.user?.name) {
       setText(els.nameSpan, profileData.user.name);
     }
@@ -236,27 +204,53 @@
 
   // Load metrics
   async function loadMetrics() {
-    const metricsData = await apiGet('/users/metrics');
+    const metricsData = await apiGet('/api/users/metrics');
     if (!metricsData) {
       console.warn('⚠️ No metrics data received');
       return;
     }
 
     try {
-      // Update summary cards
-      setText(els.bottles, String(metricsData.bottlesReturned ?? 0));
-      setText(els.upi, `₹${(metricsData.upiEarned ?? 0).toLocaleString()}`);
-      setText(els.rank, `#${metricsData.rank ?? 0}`);
+      const withdrawableAmt = metricsData.balance || 0;
+      const pendingAmt = metricsData.pendingBalance || 0;
+      const totalAmt = withdrawableAmt + pendingAmt;
 
-      // Update overview widgets
-      setText(els.balance, `₹${(metricsData.balance ?? 0).toFixed(2)}`);
-      setText(els.withdrawals, `₹${(metricsData.withdrawals ?? 0).toLocaleString()}`);
-      setText(els.rewards, `₹${(metricsData.rewards ?? 0).toLocaleString()}`);
-      setText(els.bottlesMeta, String(metricsData.bottlesReturned ?? 0));
+      setText(els.bottles, String(metricsData.bottlesReturned ?? 0));
+      setText(els.upi, `₹${totalAmt.toFixed(2)}`); 
+      setText(els.balance, `₹${totalAmt.toFixed(2)}`);
+
+      // Handle Withdrawal Button State
+      if (els.withdrawBtn) {
+        const minWithdrawal = 20;
+        if (withdrawableAmt >= minWithdrawal) {
+          els.withdrawBtn.style.opacity = '1';
+          els.withdrawBtn.style.cursor = 'pointer';
+          if(els.withdrawMsg) {
+             els.withdrawMsg.textContent = 'Ready to withdraw!';
+             els.withdrawMsg.style.color = 'var(--success)';
+          }
+          els.withdrawBtn.onclick = () => {
+            alert(`Initiating withdrawal of ₹${withdrawableAmt.toFixed(2)} to your bank account...`);
+          };
+        } else {
+          els.withdrawBtn.style.opacity = '0.5';
+          els.withdrawBtn.style.cursor = 'not-allowed';
+          if(els.withdrawMsg) {
+             els.withdrawMsg.textContent = `₹${(minWithdrawal - withdrawableAmt).toFixed(2)} more needed to withdraw`;
+             els.withdrawMsg.style.color = 'var(--text-muted)';
+          }
+          els.withdrawBtn.onclick = null;
+        }
+      }
 
       // Update recycling rate
-      if (typeof metricsData.recyclingRate === 'number') {
-        setText(els.recyclingRate, `${Math.round(metricsData.recyclingRate)}%`);
+      if (els.recyclingRate && typeof metricsData.recyclingRate === 'number') {
+        const pct = Math.min(100, Math.round(metricsData.recyclingRate));
+        els.recyclingRate.textContent = `${pct}%`;
+        const wrap = els.recyclingRate.closest('.progress-circle-wrap');
+        if(wrap) {
+            wrap.style.background = `conic-gradient(var(--accent-primary) ${pct}%, rgba(255,255,255,0.05) 0)`;
+        }
       }
 
       console.log('📊 Metrics updated successfully');
@@ -269,13 +263,9 @@
   // Load QR activity
   async function loadQRActivity() {
     try {
-      const response = await fetch(`${API_BASE}/qr/my-scans`, {
-        headers: { 'Authorization': `Bearer ${getToken()}` }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        displayRecentQRActivity(data.scans || []);
+      const data = await apiGet('/api/qr/my-scans');
+      if (data && data.success) {
+        displayRecentQRActivity(data.data?.scans || data.bottles || data.scans || []);
       }
     } catch (error) {
       console.error('❌ Load QR activity error:', error);
@@ -287,23 +277,43 @@
     if (!els.activity) return;
 
     els.activity.innerHTML = '';
+    els.activity.classList.remove('empty-activity');
 
     if (scans.length === 0) {
-      els.activity.innerHTML = '<li><span class="dot yellow"></span>No recent QR activity</li>';
+      els.activity.classList.add('empty-activity');
+      els.activity.innerHTML = `
+        <div class="empty-icon"><i class='bx bx-history'></i></div>
+        <h4 style="margin-bottom: 6px; font-size: 0.9rem;">No recent activity</h4>
+        <p class="text-muted" style="font-size: 0.8rem; margin-bottom: 16px;">Start recycling to earn Paisa!</p>
+        <a href="qr.html" class="btn-secondary" style="display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 20px;">Find a machine</a>
+      `;
       return;
     }
 
     scans.slice(0, 3).forEach(scan => {
-      const li = document.createElement('li');
-      const dotClass = scan.status === 'approved' ? 'green' :
-        scan.status === 'rejected' ? 'red' : 'yellow';
+      const date = new Date(scan.scannedAt || scan.createdAt).toLocaleDateString('en-IN', {
+          day: 'numeric', month: 'short'
+      });
+      const isCompleted = scan.status === 'completed' || scan.status === 'approved';
+      const statusColor = isCompleted ? 'var(--success)' : 'var(--warning)';
+      const statusText = isCompleted ? 'COMPLETED' : 'PENDING';
+      const value = isCompleted ? `₹${scan.reward || 5}` : '---';
 
-      li.innerHTML = `
-        <span class="dot ${dotClass}"></span>
-        QR ${scan.qrType || 'bottle_return'} - ${scan.status.toUpperCase()} 
-        (${new Date(scan.createdAt).toLocaleDateString()})
+      const html = `
+        <div style="display: flex; align-items: center; gap: 16px; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <div style="width: 40px; height: 40px; border-radius: 12px; background: rgba(255,138,0,0.1); color: var(--accent-primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
+                <i class='bx bx-recycle'></i>
+            </div>
+            <div style="flex: 1;">
+                <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 4px;">Bottle Return</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">${date} • <span style="color: ${statusColor}; font-weight:700;">${statusText}</span></div>
+            </div>
+            <div style="text-align: right; font-weight: 700; color: var(--accent-secondary); font-size: 1rem;">
+                ${value}
+            </div>
+        </div>
       `;
-      els.activity.appendChild(li);
+      els.activity.insertAdjacentHTML('beforeend', html);
     });
   }
 

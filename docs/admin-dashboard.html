@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | BotalSePaisa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/admin-dashboard.css">
+    <!-- QR Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="brand">
+            <h2>Admin Panel</h2>
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active">Pending Reviews</a>
+            <a href="admin-generate-qr.html" class="nav-item">Generate QR Codes</a>
+            <a href="user.html" class="nav-item">Back to User Dashboard</a>
+            <a href="#" class="nav-item" id="logout-btn">Logout</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <header class="top-header">
+            <h1>Verify Returns</h1>
+            <div class="user-info">
+                <span id="admin-name">Admin</span>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Left Side: QR Scanner -->
+            <div class="panel scanner-panel">
+                <div class="panel-header">
+                    <h3>Hub Scanner</h3>
+                    <span class="badge" id="scanner-status">Ready</span>
+                </div>
+                <div class="panel-body">
+                    <div id="reader-container">
+                        <div id="reader" width="100%"></div>
+                    </div>
+                    <div class="scanner-controls">
+                        <button id="start-scan-btn" class="btn btn-primary">Start Scanner</button>
+                        <button id="stop-scan-btn" class="btn btn-danger" style="display: none;">Stop Scanner</button>
+                    </div>
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                        <label style="display:block; margin-bottom:0.5rem; color:var(--text-muted); font-size:0.85rem;">Or enter QR code manually:</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="manual-qr-input" placeholder="Paste QR code text here..." style="flex:1; padding:0.6rem; background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:6px; color:white; font-family:inherit;">
+                            <button id="manual-qr-btn" class="btn btn-primary">Find</button>
+                        </div>
+                    </div>
+                    <div id="scan-result-msg" class="message" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Right Side: Pending Requests List -->
+            <div class="panel list-panel">
+                <div class="panel-header">
+                    <h3>Pending User Scans</h3>
+                    <button id="refresh-btn" class="btn btn-icon">🔄</button>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Reward</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pending-list">
+                                <tr>
+                                    <td colspan="4" class="text-center">Loading pending requests...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approval Modal -->
+    <div id="approval-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Review Request</h3>
+            <div class="modal-body">
+                <p><strong>User:</strong> <span id="modal-user"></span></p>
+                <p><strong>Reward:</strong> ₹<span id="modal-reward"></span></p>
+                <div class="form-group">
+                    <label for="admin-comment">Add Comment (Optional)</label>
+                    <input type="text" id="admin-comment" placeholder="e.g. Bottle is damaged">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="modal-cancel" class="btn btn-secondary">Cancel</button>
+                <button id="modal-reject" class="btn btn-danger">Reject</button>
+                <button id="modal-approve" class="btn btn-success">Approve</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>

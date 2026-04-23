@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BotalSePaisa - Sign In</title>
+    <title>BotalSePaisa - Sign Up</title>
     <link rel="stylesheet" href="styles/app.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
@@ -13,24 +13,26 @@
             justify-content: center;
             min-height: 100vh;
             padding: 30px;
-            padding-bottom: 20px; /* No bottom nav here */
+            padding-bottom: 20px;
         }
         .logo-section {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         .logo-section img {
-            height: 40px;
-            margin-bottom: 10px;
+            height: 35px;
+            margin-bottom: 8px;
         }
         .logo-section h1 {
             color: var(--accent-primary);
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 5px;
         }
         .logo-section p {
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .auth-tabs {
@@ -38,7 +40,7 @@
             background: var(--bg-input);
             border-radius: var(--border-radius-sm);
             padding: 4px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         .auth-tab {
             flex: 1;
@@ -52,12 +54,12 @@
             transition: all 0.3s;
         }
         .auth-tab.active {
-            background: var(--bg-card);
-            color: var(--text-main);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 138, 0, 0.3);
         }
 
-        .input-group { position: relative; }
+        .input-group { position: relative; margin-bottom: 12px; }
         .input-icon {
             position: absolute;
             left: 16px;
@@ -67,24 +69,30 @@
         }
         .input-field {
             padding-left: 45px;
+            padding-top: 12px;
+            padding-bottom: 12px;
         }
-        .eye-icon {
-            position: absolute;
-            right: 16px;
-            top: 40px;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        .forgot-link {
-            text-align: right;
-            margin-top: -5px;
+        
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 15px;
             margin-bottom: 20px;
+            gap: 10px;
         }
-        .forgot-link a {
-            color: var(--accent-primary);
+        .checkbox-group input {
+            margin-top: 4px;
+            accent-color: var(--accent-primary);
+        }
+        .checkbox-group label {
             font-size: 0.75rem;
-            font-weight: 600;
+            color: var(--text-muted);
+            line-height: 1.4;
+            text-transform: none;
+            font-weight: normal;
+        }
+        .checkbox-group a {
+            color: var(--accent-primary);
             text-decoration: none;
         }
         
@@ -92,7 +100,7 @@
             display: flex;
             align-items: center;
             text-align: center;
-            margin: 30px 0;
+            margin: 20px 0;
             color: var(--text-muted);
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -110,41 +118,56 @@
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         .social-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: var(--border-radius-sm);
-            background: var(--bg-input);
-            border: 1px solid rgba(255,255,255,0.05);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--text-muted);
             font-size: 1.2rem;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+        .social-btn:hover {
+            color: white;
+            border-color: rgba(255,255,255,0.3);
         }
         
-        .guest-link {
+        .signin-link {
             text-align: center;
             color: var(--text-muted);
             font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+        .signin-link a {
+            color: var(--accent-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .guest-link {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
             text-decoration: none;
             display: block;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         
         .footer-text {
             text-align: center;
-            color: var(--text-muted);
+            color: rgba(255,255,255,0.3);
             font-size: 0.65rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-top: auto;
         }
-        
-        /* Error Alert */
+
         .error-msg {
             color: var(--danger);
             background: rgba(255, 61, 113, 0.1);
@@ -152,7 +175,7 @@
             border-radius: 8px;
             font-size: 0.85rem;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: none;
         }
     </style>
@@ -166,67 +189,69 @@
     </div>
 
     <div class="auth-tabs">
-        <a href="login.html" class="auth-tab active">SIGN IN</a>
-        <a href="signup.html" class="auth-tab">SIGN UP</a>
+        <a href="login.html" class="auth-tab">Sign In</a>
+        <a href="signup.html" class="auth-tab active">Sign Up</a>
     </div>
 
-    <div style="margin-bottom: 24px;">
-        <h2 style="font-size: 1.2rem; margin-bottom: 8px;">Welcome Back</h2>
-        <p class="text-muted" style="font-size: 0.85rem;">Securely access your recycling dashboard</p>
+    <div style="margin-bottom: 20px;">
+        <h2 style="font-size: 1.2rem; margin-bottom: 4px;">Hello, Friend!</h2>
+        <p class="text-muted" style="font-size: 0.85rem;">Create your account to start earning rewards.</p>
     </div>
 
     <div id="error-message" class="error-msg"></div>
 
-    <form id="login-form">
+    <form id="signup-form">
         <div class="input-group">
-            <label>Email Address</label>
+            <label>Full Name</label>
+            <i class='bx bx-user input-icon'></i>
+            <input type="text" id="name" class="input-field" placeholder="John Doe" required>
+        </div>
+
+        <div class="input-group">
+            <label>Email</label>
             <i class='bx bx-envelope input-icon'></i>
-            <input type="email" id="email" class="input-field" placeholder="name@example.com" required>
+            <input type="email" id="email" class="input-field" placeholder="john@example.com" required>
         </div>
         
-        <div class="input-group" style="margin-bottom: 10px;">
+        <div class="input-group">
             <label>Password</label>
             <i class='bx bx-lock-alt input-icon'></i>
             <input type="password" id="password" class="input-field" placeholder="••••••••" required>
-            <i class='bx bx-show eye-icon' onclick="togglePassword()"></i>
-        </div>
-        
-        <div class="forgot-link">
-            <a href="#">Forgot Password?</a>
         </div>
 
-        <button type="submit" class="btn-primary" id="login-btn">SIGN IN</button>
+        <div class="input-group">
+            <label>Confirm Password</label>
+            <i class='bx bx-check-shield input-icon'></i>
+            <input type="password" id="confirmPassword" class="input-field" placeholder="••••••••" required>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="terms" required>
+            <label for="terms">I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a></label>
+        </div>
+
+        <button type="submit" class="btn-primary" id="signup-btn">SIGN UP</button>
     </form>
 
-    <div class="divider">OR CONTINUE WITH</div>
+    <div class="divider">OR CONNECT WITH</div>
 
     <div class="social-login">
         <button class="social-btn"><i class='bx bxl-google'></i></button>
-        <button class="social-btn"><i class='bx bxl-facebook'></i></button>
         <button class="social-btn"><i class='bx bxl-apple'></i></button>
+        <button class="social-btn"><span style="font-size: 0.8rem; font-weight: bold; font-family: sans-serif;">iOS</span></button>
     </div>
 
-    <a href="qr.html" class="guest-link">Continue as Guest <i class='bx bx-chevron-right'></i></a>
+    <div class="signin-link">
+        Already have an account? <a href="login.html">Sign In</a>
+    </div>
+    
+    <a href="qr.html" class="guest-link">Continue as Guest</a>
 
     <div class="footer-text">
-        © 2025 BotalSePaisa — Transforming waste into wealth<br>
-        <span style="opacity:0.5; margin-top:5px; display:inline-block;">Privacy Policy • Terms of Service</span>
+        © 2025 BotalSePaisa — Transforming waste into wealth
     </div>
 </div>
 
-<script>
-    function togglePassword() {
-        const input = document.getElementById('password');
-        const icon = document.querySelector('.eye-icon');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.replace('bx-show', 'bx-hide');
-        } else {
-            input.type = 'password';
-            icon.classList.replace('bx-hide', 'bx-show');
-        }
-    }
-</script>
-<script src="js/login.js"></script>
+<script src="js/signup.js"></script>
 </body>
 </html>

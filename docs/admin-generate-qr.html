@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Generate QR Code | BotalSePaisa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-primary: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+        }
+
+        #qr-result {
+            margin-top: 2rem;
+            text-align: center;
+            display: none;
+            padding-top: 1.5rem;
+            border-top: 1px dashed rgba(255,255,255,0.2);
+        }
+
+        #qr-result img {
+            max-width: 250px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            margin-bottom: 1rem;
+            background: white;
+            padding: 1rem;
+        }
+
+        #download-btn {
+            background: var(--success);
+            margin-bottom: 1rem;
+        }
+
+        #download-btn:hover {
+            background: #059669;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error);
+            color: #fca5a5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generate QR Code</h1>
+        <p class="subtitle">Create valid bottle return codes (Admin Only)</p>
+
+        <div id="status-message" class="message"></div>
+
+        <form id="qr-generator-form">
+            <div class="form-group">
+                <label for="bottle-size">Bottle Size</label>
+                <select id="bottle-size" required>
+                    <option value="250ml">250ml</option>
+                    <option value="500ml" selected>500ml</option>
+                    <option value="1ltr">1 Liter</option>
+                    <option value="2ltr">2 Liters</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="reward-value">Reward Value (₹)</label>
+                <input type="number" id="reward-value" value="1.00" step="0.50" min="0.50" required>
+            </div>
+
+            <button type="submit" id="generate-btn">Generate QR Code</button>
+        </form>
+
+        <div id="qr-result">
+            <h3 style="margin-top:0; color: #a78bfa;">Ready for Print!</h3>
+            <img id="qr-image" src="" alt="Generated QR Code">
+            <a id="download-link" download="botalsepaisa-qr.png">
+                <button id="download-btn">⬇️ Download PNG</button>
+            </a>
+            <button onclick="resetForm()" style="background: transparent; border: 1px solid rgba(255,255,255,0.2);">Create Another</button>
+        </div>
+    </div>
+
+    <script src="js/admin-generate-qr.js"></script>
+</body>
+</html>

@@ -1,384 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Return History | Botalsepaisa</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles/return.css" />
-    <!-- Optional: theme early init -->
-    <script>(function () { var t = localStorage.getItem('theme'); if (t) document.documentElement.setAttribute('data-theme', t); })();</script>
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BotalSePaisa - Return History</title>
+    <link rel="stylesheet" href="styles/app.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+        .top-header .brand-logo {
+            font-size: 1.25rem;
+            color: var(--accent-primary);
+        }
+        .back-btn {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            margin-bottom: 4px;
+        }
+        .page-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        
+        /* Pill Filters */
+        .pill-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .pill {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--bg-input);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        .pill.active {
+            background: var(--accent-gradient);
+            color: white;
+            border-color: transparent;
+        }
+        .pill-count {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+        .pill.active .pill-count { background: rgba(0,0,0,0.2); }
+        .pill.pending .pill-count { color: var(--warning); background: rgba(255,170,0,0.1); }
+        
+        /* Filter Controls */
+        .filter-controls {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .filter-group label {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .filter-select {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: var(--border-radius-sm);
+            font-family: 'Inter', sans-serif;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FF8A00%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px top 50%;
+            background-size: 10px auto;
+        }
+        .filter-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
 
+        /* Transactions List */
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .list-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+        
+        .transaction-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        .tx-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(255,138,0,0.1);
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .tx-details { flex: 1; }
+        .tx-id {
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        .tx-meta {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .tx-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+        .tx-amount {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+        }
+        .tx-amount.rejected { color: var(--text-muted); text-decoration: line-through; }
+
+        .view-more {
+            text-align: center;
+            color: var(--accent-primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 20px 0 40px;
+            cursor: pointer;
+        }
+
+        /* Sticky Footer Summary */
+        .summary-footer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .summary-box {
+            background: linear-gradient(145deg, #1A2235 0%, #151A2E 100%);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .summary-title {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .summary-val {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 4px;
+        }
+        .summary-trend {
+            font-size: 0.65rem;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+    </style>
+</head>
 <body>
-    <header class="header">
-        <h1 class="logo">Botalsepaisa</h1>
-        <button class="back-btn" onclick="location.href='user.html'">← Back to Dashboard</button>
+
+    <header class="top-header">
+        <div class="brand-logo">BotalSePaisa</div>
+        <a href="user.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Back</a>
     </header>
 
-    <main class="container">
-        <h2>Return History</h2>
+    <div class="container">
+        <div class="card" style="border:none; padding:0; background:transparent; box-shadow:none;">
+            <h1 class="page-title">Return History</h1>
+            <p class="page-subtitle">Track your ecological impact and earnings</p>
 
-        <!-- Quick status filters with counts -->
-        <div class="status-toolbar" role="group" aria-label="Quick status filters">
-            <div class="seg-wrap">
-                <button class="seg-btn active" data-status="">
-                    All
-                    <span class="count-badge" id="count-all">0</span>
-                </button>
-                <button class="seg-btn" data-status="completed">
-                    Completed
-                    <span class="count-badge" id="count-completed">0</span>
-                </button>
-                <button class="seg-btn" data-status="pending">
-                    Pending
-                    <span class="count-badge" id="count-pending">0</span>
-                </button>
-                <button class="seg-btn" data-status="rejected">
-                    Rejected
-                    <span class="count-badge" id="count-rejected">0</span>
-                </button>
+            <div class="pill-filters">
+                <div class="pill active">All</div>
+                <div class="pill">Completed <span class="pill-count" id="count-completed">0</span></div>
+                <div class="pill pending">Pending <span class="pill-count" id="count-pending" style="color:var(--warning);">0</span></div>
             </div>
-            <button id="refresh" class="btn btn-primary">Refresh Data</button>
+
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label>DATE RANGE</label>
+                    <input type="date" class="filter-select" id="date-filter">
+                </div>
+                <div class="filter-group">
+                    <label>STATUS</label>
+                    <select class="filter-select" id="status-filter">
+                        <option value="all">All Transactions</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="filter-buttons">
+                    <button class="btn-primary" style="padding:12px; font-size:0.85rem;" id="refresh-btn">
+                        <i class='bx bx-refresh'></i> Refresh Data
+                    </button>
+                    <button class="btn-secondary" id="clear-btn">Clear Filters</button>
+                </div>
+            </div>
+
+            <div class="list-header">
+                <div class="list-title">RECENT TRANSACTIONS</div>
+                <div class="list-title" style="text-transform: none; font-weight: 600;" id="showing-text">Showing 0 records</div>
+            </div>
+
+            <div id="transactions-list">
+                <!-- Transactions will be loaded here via JS -->
+                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.9rem;">
+                    Loading transactions...
+                </div>
+            </div>
+
+            <div class="view-more" id="view-more-btn">View More History</div>
+
+            <!-- Summary Footer -->
+            <div class="summary-footer">
+                <div class="summary-box">
+                    <div class="summary-title">TOTAL BOTTLES</div>
+                    <div class="summary-val" id="summary-bottles">0</div>
+                    <div class="summary-trend"><i class='bx bx-trending-up'></i> +0% this month</div>
+                </div>
+                <div class="summary-box">
+                    <div class="summary-title">PAISA EARNED</div>
+                    <div class="summary-val" id="summary-earned">&#8377;0</div>
+                    <div class="summary-trend"><i class='bx bx-trending-up'></i> +&#8377;0 this month</div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <!-- Existing filters -->
-        <section class="filter-section">
-            <label for="date-filter">Filter by Date:</label>
-            <input type="date" id="date-filter" name="date-filter" />
-            <label for="status-filter">Status:</label>
-            <select id="status-filter" name="status-filter">
-                <option value="">All</option>
-                <option value="completed">Completed</option>
-                <option value="pending">Pending</option>
-                <option value="rejected">Rejected</option>
-            </select>
-            <button id="clear-filters">Clear Filters</button>
-        </section>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="user.html" class="nav-item">
+            <i class='bx bx-grid-alt'></i>
+            <span>DASHBOARD</span>
+        </a>
+        <a href="qr.html" class="nav-item">
+            <i class='bx bx-qr-scan'></i>
+            <span>SCAN</span>
+        </a>
+        <a href="return.html" class="nav-item active">
+            <i class='bx bx-history'></i>
+            <span>HISTORY</span>
+        </a>
+        <a href="leaderboard.html" class="nav-item">
+            <i class='bx bx-bar-chart-alt-2'></i>
+            <span>RANKINGS</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class='bx bx-user'></i>
+            <span>PROFILE</span>
+        </a>
+    </nav>
+    <style>
+        .nav-item.active i { color: var(--accent-primary); text-shadow: 0 0 10px rgba(255, 138, 0, 0.5); }
+    </style>
 
-        <table aria-label="Return History Table" id="history-table">
-            <thead>
-                <tr>
-                    <th>Bottle ID</th>
-                    <th>Date Returned</th>
-                    <th>Location</th>
-                    <th>Status</th>
-                    <th>Reward Earned</th>
-                </tr>
-            </thead>
-            <tbody id="history-table-body">
-                <!-- Table rows will be dynamically inserted here by JavaScript -->
-            </tbody>
-        </table>
-    </main>
-
-    <footer class="footer">
-        <p> 2025 Botalsepaisa · Transforming waste into wealth</p>
-    </footer>
-
-    <script>
-        (function () {
-            console.log(' User Transaction History Loading...');
-
-            // API Configuration
-            const API_CONFIG = {
-                ngrok: 'https://c7c917092226.ngrok-free.app/api/admin',
-                local: 'http://localhost:6000/api/admin'
-            };
-
-            let currentApiBase = null;
-            let allTransactions = [];
-            let filteredTransactions = [];
-
-            // Get working API base
-            async function getApiBase() {
-                if (currentApiBase) return currentApiBase;
-
-                try {
-                    const response = await fetch(`${API_CONFIG.local}/health`);
-                    if (response.ok) {
-                        currentApiBase = API_CONFIG.local;
-                        return currentApiBase;
-                    }
-                } catch (e) {
-                    console.log('Local API not available');
-                }
-
-                try {
-                    const response = await fetch(`${API_CONFIG.ngrok}/health`, {
-                        headers: { 'ngrok-skip-browser-warning': 'true' }
-                    });
-                    if (response.ok) {
-                        currentApiBase = API_CONFIG.ngrok;
-                        return currentApiBase;
-                    }
-                } catch (e) {
-                    console.log('Ngrok not available');
-                }
-
-                throw new Error('No API endpoints available');
-            }
-
-            // Get current user ID
-            function getCurrentUser() {
-                return localStorage.getItem('userId') || 'user_demo_123';
-            }
-
-            // Load user transactions
-            async function loadUserTransactions() {
-                try {
-                    updateConnectionStatus('loading', '🔄 Loading your transactions...');
-
-                    const userId = getCurrentUser();
-                    const apiBase = await getApiBase();
-
-                    console.log('📊 Loading transactions for user:', userId);
-
-                    const response = await fetch(`${apiBase}/all-bottles-history?userId=${userId}&limit=100`, {
-                        headers: {
-                            'Authorization': 'Bearer admin123',
-                            'Content-Type': 'application/json',
-                            'ngrok-skip-browser-warning': 'true'
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API Error: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    if (data.success && data.bottles.length > 0) {
-                        allTransactions = data.bottles.map(bottle => ({
-                            bottleId: bottle.qrCode,
-                            dateReturned: bottle.scannedAt,
-                            processedAt: bottle.approvedAt || bottle.rejectedAt,
-                            location: 'BotalSePaisa Collection Center',
-                            status: bottle.status,
-                            reward: bottle.reward,
-                            rewardText: bottle.reward === 0.5 ? '₹0.50 (50p)' : `₹${bottle.reward.toFixed(2)}`,
-                            rejectionReason: bottle.rejectionReason,
-                            processingTimeMinutes: bottle.processingTimeMinutes,
-                            adminId: bottle.approvedBy
-                        }));
-
-                        filteredTransactions = [...allTransactions];
-                        displayTransactions(filteredTransactions);
-                        updateSummaryStats(allTransactions);
-                        updateConnectionStatus('ready', '✅ Data loaded successfully');
-
-                        console.log('✅ Loaded', allTransactions.length, 'transactions');
-                    } else {
-                        throw new Error('No transactions found');
-                    }
-
-                } catch (error) {
-                    console.error('❌ Error loading transactions:', error);
-                    updateConnectionStatus('error', '❌ Failed to load data');
-                    loadDemoData();
-                }
-            }
-
-            // Display transactions
-            function displayTransactions(transactions) {
-                const tbody = document.getElementById('history-table-body');
-                const recordCount = document.getElementById('record-count');
-
-                if (!tbody) return;
-
-                if (transactions.length === 0) {
-                    tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-muted);">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
-                            <h3>No Transactions Yet</h3>
-                            <p>Start scanning bottle QR codes to see your transaction history!</p>
-                            <div style="margin-top: 1.5rem;">
-                                <a href="user-qr.html" style="
-                                    background: var(--accent-amber);
-                                    color: var(--dark-blue);
-                                    padding: 0.8rem 1.5rem;
-                                    border-radius: 0.8rem;
-                                    text-decoration: none;
-                                    font-weight: 600;
-                                    display: inline-block;
-                                ">📱 Scan Your First Bottle</a>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                    if (recordCount) recordCount.textContent = '0 transactions';
-                    return;
-                }
-
-                tbody.innerHTML = transactions.map((transaction, index) => {
-                    const dateReturned = new Date(transaction.dateReturned).toLocaleDateString('en-IN');
-                    const bottleId = transaction.bottleId.length > 15 ?
-                        transaction.bottleId.substring(0, 15) + '...' : transaction.bottleId;
-
-                    let rewardDisplay = '';
-                    if (transaction.status === 'completed') {
-                        rewardDisplay = `<span style="color: #10b981; font-weight: 700;">${transaction.rewardText}</span>`;
-                    } else if (transaction.status === 'pending') {
-                        rewardDisplay = `<span style="color: #f59e0b; font-weight: 700;">${transaction.rewardText} (Pending)</span>`;
-                    } else {
-                        rewardDisplay = `<span style="color: #ef4444; font-weight: 700;">₹0 (Rejected)</span>`;
-                    }
-
-                    return `
-                    <tr style="cursor: pointer;" onclick="showTransactionDetails('${transaction.bottleId}')">
-                        <td title="${transaction.bottleId}">${bottleId}</td>
-                        <td>${dateReturned}</td>
-                        <td>${transaction.location}</td>
-                        <td><span class="status ${transaction.status}">${transaction.status}</span></td>
-                        <td>${rewardDisplay}</td>
-                    </tr>
-                `;
-                }).join('');
-
-                if (recordCount) recordCount.textContent = `${transactions.length} transactions`;
-            }
-
-            // Update summary stats
-            function updateSummaryStats(transactions) {
-                const stats = {
-                    total: transactions.length,
-                    completed: transactions.filter(t => t.status === 'completed').length,
-                    pending: transactions.filter(t => t.status === 'pending').length,
-                    rejected: transactions.filter(t => t.status === 'rejected').length,
-                    totalEarned: transactions.filter(t => t.status === 'completed')
-                        .reduce((sum, t) => sum + t.reward, 0)
-                };
-
-                // Add summary stats section if it doesn't exist
-                let summarySection = document.querySelector('.summary-stats');
-                if (!summarySection) {
-                    summarySection = document.createElement('div');
-                    summarySection.className = 'summary-stats';
-                    summarySection.innerHTML = `
-                `;
-
-                    const container = document.querySelector('.container');
-                    const filterSection = document.querySelector('.filter-section');
-                    container.insertBefore(summarySection, filterSection);
-                }
-            }
-
-            // Show transaction details
-            window.showTransactionDetails = function (bottleId) {
-                const transaction = allTransactions.find(t => t.bottleId === bottleId);
-                if (!transaction) return;
-
-                alert(`
-    Bottle Details:
-    
-    🔖 Bottle ID: ${transaction.bottleId}
-    📅 Scanned: ${new Date(transaction.dateReturned).toLocaleString('en-IN')}
-    📊 Status: ${transaction.status.toUpperCase()}
-    💰 Reward: ${transaction.status === 'rejected' ? '₹0' : transaction.rewardText}
-    ${transaction.rejectionReason ? `\n❌ Rejection Reason: ${transaction.rejectionReason}` : ''}
-    ${transaction.adminId ? `\n👨‍💼 Processed By: ${transaction.adminId}` : ''}
-            `);
-            };
-
-            // Apply filters
-            function applyFilters() {
-                const dateFilter = document.getElementById('date-filter').value;
-                const statusFilter = document.getElementById('status-filter').value;
-
-                filteredTransactions = allTransactions.filter(transaction => {
-                    let matches = true;
-
-                    if (dateFilter) {
-                        const transactionDate = new Date(transaction.dateReturned).toISOString().split('T')[0];
-                        matches = matches && (transactionDate === dateFilter);
-                    }
-
-                    if (statusFilter) {
-                        matches = matches && (transaction.status === statusFilter);
-                    }
-
-                    return matches;
-                });
-
-                displayTransactions(filteredTransactions);
-                updateSummaryStats(filteredTransactions);
-            }
-
-            // Clear filters
-            function clearFilters() {
-                document.getElementById('date-filter').value = '';
-                document.getElementById('status-filter').value = '';
-
-                filteredTransactions = [...allTransactions];
-                displayTransactions(filteredTransactions);
-                updateSummaryStats(allTransactions);
-            }
-
-            // Load demo data - No demo data will be loaded
-            function loadDemoData() {
-                allTransactions = [];
-                filteredTransactions = [];
-                displayTransactions(filteredTransactions);
-                updateSummaryStats(allTransactions);
-                updateConnectionStatus('ready', '✅ No transactions found');
-                showEmptyState();
-            }
-
-            // Update connection status
-            function updateConnectionStatus(status, message) {
-                const statusDiv = document.getElementById('connection-status');
-                const statusIcon = document.getElementById('status-icon');
-                const statusText = document.getElementById('status-text');
-
-                if (statusIcon && statusText) {
-                    statusText.textContent = message;
-
-                    if (status === 'ready') {
-                        statusIcon.textContent = '✅';
-                        statusDiv.className = 'connection-status ready';
-                    } else if (status === 'error') {
-                        statusIcon.textContent = '❌';
-                        statusDiv.className = 'connection-status error';
-                    } else if (status === 'loading') {
-                        statusIcon.textContent = '🔄';
-                        statusDiv.className = 'connection-status loading';
-                    }
-                }
-            }
-
-            // Setup event listeners
-            function setupEventListeners() {
-                document.getElementById('date-filter')?.addEventListener('change', applyFilters);
-                document.getElementById('status-filter')?.addEventListener('change', applyFilters);
-                document.getElementById('clear-filters')?.addEventListener('click', clearFilters);
-                document.getElementById('refresh-data')?.addEventListener('click', loadUserTransactions);
-            }
-
-            // Initialize
-            function init() {
-                setupEventListeners();
-                loadUserTransactions();
-
-                // Hide connection status after 5 seconds if successful
-                setTimeout(() => {
-                    const statusDiv = document.getElementById('connection-status');
-                    if (statusDiv && statusDiv.classList.contains('ready')) {
-                        statusDiv.style.display = 'none';
-                    }
-                }, 5000);
-            }
-
-            // Start when ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init);
-            } else {
-                init();
-            }
-
-        })();
-    </script>
+    <script src="js/return_history.js"></script>
 </body>
-
 </html>

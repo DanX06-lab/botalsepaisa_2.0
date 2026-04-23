@@ -65,7 +65,8 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { 
         id: user._id.toString(), 
-        email: user.email 
+        email: user.email,
+        isAdmin: user.isAdmin || false
       }, 
       process.env.JWT_SECRET, 
       { expiresIn: '1d' }
@@ -77,7 +78,8 @@ exports.login = async (req, res) => {
       token, 
       user: { 
         name: user.name, 
-        email: user.email 
+        email: user.email,
+        isAdmin: user.isAdmin || false
       } 
     });
     
@@ -93,7 +95,7 @@ exports.login = async (req, res) => {
 
 exports.me = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('name email');
+    const user = await User.findById(req.user.id).select('name email isAdmin');
     if (!user) return res.status(404).json({ message: 'User not found' });
     return res.json({ user });
   } catch (error) {
@@ -143,9 +145,36 @@ exports.metrics = async (req, res) => {
       recyclingRate = bottlesReturned > 0 ? Math.min(100, (bottlesReturned * 10)) : 0; // Example calculation
     }
 
-    // Get user's rank
-    const leaderboardEntry = await Leaderboard.findOne({ userId }).select('rank').lean();
-    const rank = leaderboardEntry?.rank || 0;
+    // Calculate user's rank dynamically
+    const higherRankedUsers = await BottleReturn.aggregate([
+      { $match: { status: 'completed' } },
+      { $group: { _id: '$userId', totalBottles: { $sum: '$count' } } },
+      { $match: { totalBottles: { $gt: bottlesReturned } } },
+      { $count: 'count' }
+    ]);
+    const rank = bottlesReturned > 0 ? (higherRankedUsers[0]?.count || 0) + 1 : 0;
+    
+    // Also send pending balance
+    const pendingBalance = cached ? (cached.pendingBalance || 0) : 0;
+
+    // Calculcate Environmental Impact
+    const environmentalImpact = {
+      plasticDiverted: parseFloat((bottlesReturned * 0.025).toFixed(2)),
+      co2Saved: parseFloat((bottlesReturned * 0.1).toFixed(2)),
+      waterSaved: parseFloat((bottlesReturned * 0.6).toFixed(2))
+    };
+
+    // Calculate Achievements & Levels
+    const level = Math.floor(bottlesReturned / 20) + 1;
+    let levelName = 'Recruit';
+    if (level >= 2) levelName = 'Active Recycler';
+    if (level >= 4) levelName = 'Eco Warrior';
+    if (level >= 8) levelName = 'Planet Saver';
+
+    const achievements = [];
+    if (bottlesReturned > 0) achievements.push({ id: 'first_scan', name: 'First Scan', unlocked: true });
+    if (bottlesReturned >= 10) achievements.push({ id: 'eco_warrior', name: 'Eco Warrior', unlocked: true });
+    if (bottlesReturned >= 50) achievements.push({ id: 'tree_planter', name: 'Tree Planter', unlocked: true });
 
     return res.json({
       bottlesReturned,
@@ -153,8 +182,13 @@ exports.metrics = async (req, res) => {
       withdrawals,
       rewards,
       balance,
+      pendingBalance,
       rank,
-      recyclingRate
+      recyclingRate,
+      environmentalImpact,
+      level,
+      levelName,
+      achievements
     });
   } catch (error) {
     console.error('Metrics error:', error);
@@ -184,5 +218,88 @@ exports.activity = async (req, res) => {
   } catch (error) {
     console.error('Activity error:', error);
     return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// NEW: Get full return history for a user
+exports.history = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    const returns = await BottleReturn.find({ userId })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Map to the format expected by the updated return.html
+    const bottles = returns.map(item => ({
+      qrCode: item._id.toString(), // We use the document ID as a fallback bottle ID
+      scannedAt: item.createdAt,
+      status: item.status,
+      reward: item.value || 0
+    }));
+
+    return res.json({ success: true, bottles });
+  } catch (error) {
+    console.error('History error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+// NEW: Get monthly leaderboard
+exports.getLeaderboard = async (req, res) => {
+  try {
+    const date = new Date();
+    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    
+    // Aggregate bottles returned this month
+    const leaderboard = await BottleReturn.aggregate([
+      { 
+        $match: { 
+          createdAt: { $gte: startOfMonth },
+          status: 'completed'
+        } 
+      },
+      { 
+        $group: { 
+          _id: '$userId', 
+          totalBottles: { $sum: '$count' },
+          totalRewards: { $sum: '$value' }
+        } 
+      },
+      { $sort: { totalBottles: -1 } },
+      { $limit: 10 },
+      { 
+        $lookup: { 
+          from: 'users', 
+          localField: '_id', 
+          foreignField: '_id', 
+          as: 'user' 
+        } 
+      },
+      { $unwind: '$user' },
+      { 
+        $project: { 
+          userId: '$_id',
+          name: '$user.name', 
+          totalBottles: 1,
+          totalRewards: 1
+        } 
+      }
+    ]);
+    
+    // Add rank
+    const rankedLeaderboard = leaderboard.map((item, index) => ({
+      rank: index + 1,
+      ...item
+    }));
+
+    return res.json({ 
+      success: true, 
+      month: date.toLocaleString('default', { month: 'long', year: 'numeric' }),
+      leaderboard: rankedLeaderboard 
+    });
+  } catch (error) {
+    console.error('Leaderboard error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
   }
 };

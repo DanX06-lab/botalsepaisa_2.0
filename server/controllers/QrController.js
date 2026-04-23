@@ -12,24 +12,24 @@ exports.generateQR = async (req, res) => {
   try {
     const { type, value, metadata } = req.body;
     const codeId = uuidv4();
-    
+
     const qrCodeRecord = new QRCode({
       codeId,
       type: type || 'bottle_return',
       value: value || 1.00,
       metadata
     });
-    
+
     await qrCodeRecord.save();
-    
+
     const qrData = JSON.stringify({
       id: codeId,
       type: type || 'bottle_return',
       value: value || 1.00
     });
-    
+
     const qrCodeDataURL = await qrcode.toDataURL(qrData);
-    
+
     res.json({
       success: true,
       qrCode: qrCodeDataURL,
@@ -38,9 +38,9 @@ exports.generateQR = async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Generate QR error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'QR generation failed' 
+      message: 'QR generation failed'
     });
   }
 };
@@ -50,13 +50,90 @@ exports.scanQR = async (req, res) => {
   try {
     const { qrData } = req.body;
     const userId = req.user.id;
-    
-    console.log('📱 QR Scan Request:', { userId, qrData });
-    
+
+    console.log('📱 QR Scan Request:', { userId, qrData, isAdmin: req.user.isAdmin });
+
     if (!qrData) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'QR data is required' 
+        message: 'QR data is required'
+      });
+    }
+
+    if (req.user.isAdmin) {
+      // Hub Admin Verification Flow
+      console.log('🛡️ Admin scanning QR code for verification:', qrData);
+
+      const pendingRequest = await QRScanRequest.findOne({
+        qrCode: qrData,
+        status: 'pending'
+      });
+
+      if (!pendingRequest) {
+        return res.status(400).json({
+          success: false,
+          message: 'No pending request found for this bottle. Either it was never scanned by a user, or already verified.'
+        });
+      }
+
+      // Found the pending request, approve it!
+      pendingRequest.status = 'approved';
+      pendingRequest.adminId = req.user.id;
+      pendingRequest.processedAt = new Date();
+      await pendingRequest.save();
+
+      const rewardValue = pendingRequest.metadata?.value || 1.00;
+      const originalUserId = pendingRequest.userId;
+
+      // Update User Stats
+      const userStats = await UserStats.findOne({ userId: originalUserId });
+      if (userStats) {
+        userStats.pendingBalance = Math.max(0, (userStats.pendingBalance || 0) - rewardValue);
+        userStats.balance = (userStats.balance || 0) + rewardValue;
+        userStats.bottlesReturnedTotal += 1;
+        userStats.rewardsTotal += rewardValue;
+        await userStats.save();
+      }
+
+      // Create Transaction
+      const transaction = new Transaction({
+        userId: originalUserId,
+        type: 'bottle_return',
+        amount: rewardValue,
+        status: 'completed',
+        metadata: {
+          qrCode: qrData,
+          adminId: req.user.id
+        }
+      });
+      await transaction.save();
+
+      // Mark QR code as inactive so it can't be reused
+      await QRCode.updateOne({ codeId: pendingRequest.qrCode }, { isActive: false });
+
+      // Notify original user
+      if (req.io) {
+        req.io.emit('qr-status-update', {
+          userId: originalUserId,
+          status: 'approved',
+          message: `✅ Bottle Verified at Hub! ₹${rewardValue.toFixed(2)} moved to your withdrawable balance.`,
+          reward: rewardValue
+        });
+      }
+
+      return res.json({
+        success: true,
+        message: 'Bottle Verified & Approved successfully.',
+        data: {
+          reward: rewardValue
+        }
+      });
+    }
+
+    if (!qrData) {
+      return res.status(400).json({
+        success: false,
+        message: 'QR data is required'
       });
     }
 
@@ -71,12 +148,12 @@ exports.scanQR = async (req, res) => {
         value: 1.00
       };
     }
-    
+
     console.log('📤 Parsed data:', parsedData);
 
     // Auto-create QR record if doesn't exist
     let qrRecord = await QRCode.findOne({ codeId: parsedData.id });
-    
+
     if (!qrRecord) {
       console.log('🔄 Creating QR record for:', parsedData.id);
       qrRecord = new QRCode({
@@ -84,24 +161,24 @@ exports.scanQR = async (req, res) => {
         type: parsedData.type || 'bottle_return',
         value: parsedData.value || 1.00,
         isActive: true,
-        metadata: { 
-          autoCreated: true, 
+        metadata: {
+          autoCreated: true,
           originalQR: qrData,
-          createdAt: new Date() 
+          createdAt: new Date()
         }
       });
-      
+
       await qrRecord.save();
       console.log('✅ QR record created');
     }
-    
+
     // Check for existing pending request from this user
     const existingRequest = await QRScanRequest.findOne({
       userId,
       qrCode: qrData,
       status: 'pending'
     });
-    
+
     if (existingRequest) {
       return res.json({
         success: true,
@@ -126,7 +203,7 @@ exports.scanQR = async (req, res) => {
         message: 'QR code already used and approved'
       });
     }
-    
+
     // Create new scan request
     const scanRequest = new QRScanRequest({
       userId,
@@ -139,10 +216,22 @@ exports.scanQR = async (req, res) => {
         originalQRData: qrData
       }
     });
-    
+
     await scanRequest.save();
     console.log('✅ Scan request created:', scanRequest._id);
-    
+
+    // Add to pending balance
+    const userStats = await UserStats.findOne({ userId });
+    if (userStats) {
+      userStats.pendingBalance = (userStats.pendingBalance || 0) + (parsedData.value || 1.00);
+      await userStats.save();
+    } else {
+      await UserStats.create({
+        userId,
+        pendingBalance: (parsedData.value || 1.00)
+      });
+    }
+
     // REMOVED: Auto-approval - Admin will approve manually
     // setTimeout(async () => {
     //   try {
@@ -151,7 +240,7 @@ exports.scanQR = async (req, res) => {
     //     console.error('❌ Auto-approval error:', error);
     //   }
     // }, 3000);
-    
+
     // Notify admins
     if (req.io) {
       req.io.emit('admin-notification', {
@@ -164,7 +253,7 @@ exports.scanQR = async (req, res) => {
         }
       });
     }
-    
+
     res.json({
       success: true,
       status: 'pending',
@@ -175,12 +264,12 @@ exports.scanQR = async (req, res) => {
         estimatedApproval: 'Admin verification required'
       }
     });
-    
+
   } catch (error) {
     console.error('❌ Scan QR error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'QR scan processing failed. Please try again.' 
+      message: 'QR scan processing failed. Please try again.'
     });
   }
 };
@@ -193,24 +282,24 @@ async function autoApproveRequest(requestId, io, userId) {
       console.log('⚠️ Request not found or already processed');
       return;
     }
-    
+
     let qrData;
     try {
       qrData = JSON.parse(request.qrCode);
     } catch (e) {
-      qrData = { 
+      qrData = {
         value: request.metadata?.value || 1.00,
-        type: 'bottle_return' 
+        type: 'bottle_return'
       };
     }
-    
+
     const rewardAmount = calculateReward(qrData);
-    
+
     // Update request status
     request.status = 'approved';
     request.processedAt = new Date();
     await request.save();
-    
+
     // Create bottle return record
     await BottleReturn.create({
       userId: request.userId,
@@ -219,11 +308,12 @@ async function autoApproveRequest(requestId, io, userId) {
       value: rewardAmount,
       bottleSize: qrData.size || '500ml'
     });
-    
+
     // Create transaction
     await Transaction.create({
       userId: request.userId,
       kind: 'credit',
+      type: 'bottle_return',
       amount: rewardAmount,
       description: `Bottle return reward - QR scan`,
       status: 'completed'
@@ -231,13 +321,13 @@ async function autoApproveRequest(requestId, io, userId) {
 
     // Update user balance directly
     await User.findByIdAndUpdate(request.userId, {
-      $inc: { 
+      $inc: {
         balance: rewardAmount,
         totalEarnings: rewardAmount,
         bottlesReturned: 1
       }
     });
-    
+
     // Update user stats
     await UserStats.findOneAndUpdate(
       { userId: request.userId },
@@ -250,7 +340,7 @@ async function autoApproveRequest(requestId, io, userId) {
       },
       { upsert: true }
     );
-    
+
     // Send real-time notification
     if (io) {
       io.to(`user_${userId}`).emit('qr-status-update', {
@@ -259,10 +349,10 @@ async function autoApproveRequest(requestId, io, userId) {
         reward: rewardAmount,
         message: `Bottle return approved! You earned ₹${rewardAmount}`
       });
-      
+
       console.log(`✅ Admin approved QR scan ${requestId} for user ${userId} - Reward: ₹${rewardAmount}`);
     }
-    
+
   } catch (error) {
     console.error('❌ Auto-approval process error:', error);
   }
@@ -274,7 +364,7 @@ function calculateReward(qrData) {
   if (qrData.value && typeof qrData.value === 'number') {
     return qrData.value;
   }
-  
+
   // Default rewards based on bottle size
   if (qrData.size) {
     const sizeRewards = {
@@ -285,7 +375,7 @@ function calculateReward(qrData) {
     };
     return sizeRewards[qrData.size] || 1.00;
   }
-  
+
   // Default reward
   return 1.00;
 }
@@ -297,14 +387,14 @@ exports.getUserScans = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    
+
     const scans = await QRScanRequest.find({ userId })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-    
+
     const total = await QRScanRequest.countDocuments({ userId });
-    
+
     res.json({
       success: true,
       data: {
@@ -319,9 +409,9 @@ exports.getUserScans = async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Get user scans error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Failed to fetch scan history' 
+      message: 'Failed to fetch scan history'
     });
   }
 };
@@ -333,16 +423,16 @@ exports.getPendingRequests = async (req, res) => {
       .populate('userId', 'name email phone balance')
       .sort({ createdAt: -1 })
       .limit(50);
-    
-    res.json({ 
+
+    res.json({
       success: true,
       data: { requests }
     });
   } catch (error) {
     console.error('❌ Get pending requests error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Failed to fetch pending requests' 
+      message: 'Failed to fetch pending requests'
     });
   }
 };
@@ -352,25 +442,25 @@ exports.processRequest = async (req, res) => {
   try {
     const { requestId, action, comment } = req.body;
     const adminId = req.user.id;
-    
+
     const request = await QRScanRequest.findById(requestId)
       .populate('userId', 'name email balance');
-    
+
     if (!request || request.status !== 'pending') {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Invalid request or already processed' 
+        message: 'Invalid request or already processed'
       });
     }
-    
+
     request.status = action === 'approve' ? 'approved' : 'rejected';
     request.adminId = adminId;
     request.adminComment = comment;
     request.processedAt = new Date();
     await request.save();
-    
+
     let rewardAmount = 0;
-    
+
     if (action === 'approve') {
       let qrData;
       try {
@@ -378,9 +468,9 @@ exports.processRequest = async (req, res) => {
       } catch (e) {
         qrData = { value: request.metadata?.value || 1.00 };
       }
-      
+
       rewardAmount = calculateReward(qrData);
-      
+
       // Create records
       await BottleReturn.create({
         userId: request.userId._id,
@@ -388,50 +478,52 @@ exports.processRequest = async (req, res) => {
         type: 'scanned',
         value: rewardAmount
       });
-      
+
       await Transaction.create({
         userId: request.userId._id,
         kind: 'credit',
+        type: 'bottle_return',
         amount: rewardAmount,
         description: `Admin approved bottle return`,
         status: 'completed'
       });
 
-      // Update user balance
+      // Update user balance in User model
       await User.findByIdAndUpdate(request.userId._id, {
-        $inc: { 
+        $inc: {
           balance: rewardAmount,
           totalEarnings: rewardAmount,
           bottlesReturned: 1
         }
       });
-      
-      // Update user stats
+
+      // Update user stats in UserStats model
       await UserStats.findOneAndUpdate(
         { userId: request.userId._id },
         {
           $inc: {
-            bottlesReturned: 1,
-            totalEarnings: rewardAmount,
-            currentBalance: rewardAmount
+            bottlesReturnedTotal: 1,
+            upiEarnedTotal: rewardAmount,
+            balance: rewardAmount,
+            pendingBalance: -rewardAmount
           }
         },
         { upsert: true }
       );
     }
-    
+
     // Notify user via Socket.IO
     if (req.io) {
       req.io.to(`user_${request.userId._id}`).emit('qr-status-update', {
         requestId: request._id,
         status: request.status,
         reward: rewardAmount,
-        message: action === 'approve' 
-          ? `Your QR code has been verified! You earned ₹${rewardAmount}` 
+        message: action === 'approve'
+          ? `Your QR code has been verified! You earned ₹${rewardAmount}`
           : `Your QR code was rejected. ${comment || 'Please try again.'}`
       });
     }
-    
+
     res.json({
       success: true,
       message: `Request ${action}d successfully`,
@@ -440,20 +532,20 @@ exports.processRequest = async (req, res) => {
         reward: rewardAmount
       }
     });
-    
+
   } catch (error) {
     console.error('❌ Process request error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Failed to process request' 
+      message: 'Failed to process request'
     });
   }
 };
 
 // Test endpoint
 exports.test = async (req, res) => {
-  res.json({ 
-    success: true, 
+  res.json({
+    success: true,
     message: 'QR Controller is working',
     timestamp: new Date().toISOString()
   });

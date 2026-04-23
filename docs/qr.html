@@ -1,141 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Scan QR Code | Botalsepaisa</title>
-    <link rel="stylesheet" href="styles/qr.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BotalSePaisa - Scan QR</title>
+    <link rel="stylesheet" href="styles/app.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .top-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--bg-dark);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .top-header .brand-logo {
+            font-size: 1.25rem;
+            color: var(--accent-primary);
+        }
+        
+        .back-nav {
+            background-color: var(--accent-primary);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--bg-dark);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .scanner-wrapper {
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Viewfinder Frame */
+        .viewfinder-container {
+            width: 280px;
+            height: 280px;
+            position: relative;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px dashed rgba(255, 138, 0, 0.4);
+        }
+        
+        #reader {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Solid Corner Reticles */
+        .corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 4px solid var(--accent-primary);
+            z-index: 10;
+        }
+        .corner-tl { top: 15px; left: 15px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
+        .corner-tr { top: 15px; right: 15px; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
+        .corner-bl { bottom: 15px; left: 15px; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
+        .corner-br { bottom: 15px; right: 15px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
+
+        .scan-instruction {
+            color: var(--text-muted);
+            text-align: center;
+            font-size: 0.85rem;
+            max-width: 200px;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .divider:not(:empty)::before { margin-right: 1em; }
+        .divider:not(:empty)::after { margin-left: 1em; }
+
+        .manual-entry {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        /* Impact Card */
+        .impact-card {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 10px;
+        }
+        .impact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 138, 0, 0.1);
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        .impact-text h4 { font-size: 0.9rem; margin-bottom: 2px; }
+        .impact-text p { font-size: 0.75rem; color: var(--text-muted); }
+        .impact-arrow { margin-left: auto; color: var(--text-muted); }
+
+        /* Floating action buttons on right side of scanner (flash, flip camera) */
+        .scanner-actions {
+            position: absolute;
+            right: -50px;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        /* Success Overlay */
+        #success-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(11, 16, 30, 0.95);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+        .success-icon {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 214, 143, 0.4);
+        }
+    </style>
 </head>
-
 <body>
-    <header class="header">
-        <h1 class="logo">Botalsepaisa</h1>
+
+    <header class="top-header">
+        <div class="brand-logo">BotalSePaisa</div>
     </header>
-    <button class="back-dashboard-btn" onclick="location.href='user.html'">← Back to Dashboard</button>
-    <main class="main-container">
+    
+    <a href="user.html" class="back-nav">
+        <i class='bx bx-left-arrow-alt'></i> Back to Dashboard
+    </a>
 
-        <section class="qr-scanner-section">
-            <div class="scanner-frame" id="qr-reader">
-                <!-- Camera feed will be injected here by JS or QR library -->
-                <p class="scanner-placeholder">Camera preview will appear here</p>
+    <div class="scanner-wrapper">
+        <!-- Viewfinder -->
+        <div style="position: relative;">
+            <div class="viewfinder-container">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                <div id="reader"></div>
             </div>
-
-            <p class="instructions">Position the QR code inside the frame to scan automatically.</p>
-
-            <div class="manual-input">
-                <label for="qr-input">Or enter QR code manually</label>
-                <input type="text" id="qr-input" name="qr-input" placeholder="Enter QR code here" />
-                <button id="submit-btn">Submit</button>
+            
+            <div class="scanner-actions">
+                <button class="action-btn" id="flash-btn" title="Toggle Flashlight"><i class='bx bx-torch'></i></button>
+                <button class="action-btn" id="camera-btn" title="Flip Camera"><i class='bx bx-camera'></i></button>
+                <button class="action-btn" id="restart-btn" title="Restart Scanner"><i class='bx bx-refresh'></i></button>
             </div>
-            <div class="upload-area">
-                <input type="file" id="qr-file" accept="image/*" hidden />
-                <button id="upload-btn" class="upload-btn">Upload QR Image</button>
-                <span id="upload-name" class="upload-name" aria-live="polite"></span>
+        </div>
+
+        <p class="scan-instruction">Position the QR code inside the frame to scan automatically</p>
+
+        <div class="divider">Or enter QR code manually</div>
+
+        <div class="manual-entry">
+            <input type="text" id="manual-input" class="input-field" placeholder="Enter QR code here" style="width: 100%; margin-bottom: 16px;">
+            <button class="btn-primary" id="manual-submit">Submit</button>
+        </div>
+
+        <!-- Impact Card -->
+        <div class="impact-card">
+            <div class="impact-icon"><i class='bx bxs-leaf'></i></div>
+            <div class="impact-text">
+                <h4>Recycling Impact</h4>
+                <p>You saved <span id="today-bottles">0</span> bottles today</p>
             </div>
+            <div class="impact-arrow"><i class='bx bx-chevron-right'></i></div>
+        </div>
+    </div>
 
-            <!-- Optional preview -->
-            <img id="qr-preview" class="qr-preview" alt="QR preview" style="display:none;" />
+    <!-- Success Overlay -->
+    <div id="success-overlay">
+        <i class='bx bxs-check-circle success-icon'></i>
+        <h2 style="margin-bottom: 10px;">Success!</h2>
+        <p class="text-muted" style="margin-bottom: 30px;">Bottle scanned and added to pending queue.</p>
+        <button class="btn-primary" onclick="window.location.href='return.html'" style="max-width: 250px;">View History</button>
+    </div>
 
-
-            <div class="scan-status" id="scan-status"></div>
-        </section>
-    </main>
-
-    <footer class="footer">
-        <p>© 2025 Botalsepaisa · Transforming waste into wealth</p>
-    </footer>
-
-    <script>
-        console.log('🚀 Loading BotalSePaisa User QR Scanner...');
-
-        // Load Socket.IO first (optional for real-time updates)
-        function loadSocketIO() {
-            const script = document.createElement('script');
-            script.src = '/socket.io/socket.io.js';
-            script.onload = function () {
-                console.log('✅ Socket.IO loaded');
-                loadQRScanner();
-            };
-            script.onerror = function () {
-                console.warn('⚠️ Socket.IO not available, loading from CDN...');
-                const cdnScript = document.createElement('script');
-                cdnScript.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
-                cdnScript.onload = function () {
-                    console.log('✅ Socket.IO loaded from CDN');
-                    loadQRScanner();
-                };
-                cdnScript.onerror = function () {
-                    console.log('ℹ️ Socket.IO unavailable - continuing without real-time updates');
-                    loadQRScanner(); // Load anyway without Socket.IO
-                };
-                document.head.appendChild(cdnScript);
-            };
-            document.head.appendChild(script);
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="user.html" class="nav-item">
+            <i class='bx bx-grid-alt'></i>
+            <span>DASHBOARD</span>
+        </a>
+        <a href="qr.html" class="nav-item active">
+            <i class='bx bx-qr-scan'></i>
+            <span>SCAN</span>
+        </a>
+        <a href="return.html" class="nav-item">
+            <i class='bx bx-history'></i>
+            <span>HISTORY</span>
+        </a>
+        <a href="leaderboard.html" class="nav-item">
+            <i class='bx bx-bar-chart-alt-2'></i>
+            <span>RANKINGS</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class='bx bx-user'></i>
+            <span>PROFILE</span>
+        </a>
+    </nav>
+    <style>
+        .nav-item.active i {
+            color: var(--accent-primary);
+            text-shadow: 0 0 10px rgba(255, 138, 0, 0.5);
         }
+    </style>
 
-        // Load the html5-qrcode library
-        function loadQRScanner() {
-            // First load html5-qrcode
-            const html5QrScript = document.createElement('script');
-            html5QrScript.src = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
-            html5QrScript.onload = function() {
-                console.log(' html5-qrcode loaded');
-                // Then load our custom scanner
-                const qrScript = document.createElement('script');
-                qrScript.src = 'js/qr-scanner.js';
-                qrScript.onload = function() {
-                    console.log(' User QR Scanner loaded');
-                    updateConnectionStatus('ready', ' Ready to scan!');
-                    // Initialize the scanner after it's loaded
-                    if (window.qrScanner && window.qrScanner.init) {
-                        window.qrScanner.init();
-                    }
-                };
-                qrScript.onerror = function() {
-                    console.error(' Failed to load QR scanner');
-                    updateConnectionStatus('error', ' Scanner script failed to load');
-                };
-                document.head.appendChild(qrScript);
-            };
-            html5QrScript.onerror = function() {
-                console.error(' Failed to load html5-qrcode');
-                updateConnectionStatus('error', ' QR library failed to load');
-            };
-            document.head.appendChild(html5QrScript);
-        }
-
-        // Update connection status
-        function updateConnectionStatus(status, message) {
-            const statusDiv = document.getElementById('connection-status');
-            const statusIcon = document.getElementById('status-icon');
-            const statusText = document.getElementById('status-text');
-
-            if (statusIcon && statusText) {
-                statusText.textContent = message;
-
-                // Update icon based on status
-                if (status === 'ready') {
-                    statusIcon.textContent = '🎯';
-                    statusDiv.className = 'connection-status ready';
-                } else if (status === 'error') {
-                    statusIcon.textContent = '❌';
-                    statusDiv.className = 'connection-status error';
-                } else if (status === 'scanning') {
-                    statusIcon.textContent = '📱';
-                    statusDiv.className = 'connection-status scanning';
-                } else {
-                    statusIcon.textContent = '🔄';
-                    statusDiv.className = 'connection-status connecting';
-                }
-            }
-        }
-
-        // Start loading process
-        updateConnectionStatus('connecting', '🔄 Loading scanner...');
-        loadSocketIO();
-    </script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="js/qr-scanner.js"></script>
 </body>
-
 </html>

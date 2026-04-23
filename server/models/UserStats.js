@@ -6,6 +6,7 @@ const userStatsSchema = new mongoose.Schema({
   upiEarnedTotal: { type: Number, default: 0 },
   rewardsTotal: { type: Number, default: 0 },
   withdrawalsTotal: { type: Number, default: 0 },
+  pendingBalance: { type: Number, default: 0 },
   balance: { type: Number, default: 0 },
   recyclingRate: { type: Number, default: 0 },
   updatedAt: { type: Date, default: Date.now }

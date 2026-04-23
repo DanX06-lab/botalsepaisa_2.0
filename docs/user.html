@@ -1,89 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BotalSePaisa · Dashboard</title>
-    <link rel="stylesheet" href="styles/user.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BotalSePaisa - Dashboard</title>
+    <link rel="stylesheet" href="styles/app.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* Dashboard Specific Styles */
+        .hero-card {
+            background: linear-gradient(145deg, #1A2235 0%, #151A2E 100%);
+            border: 1px solid rgba(255, 138, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255,138,0,0.15) 0%, rgba(255,138,0,0) 70%);
+            border-radius: 50%;
+        }
+        
+        .balance-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 20px;
+        }
+        .balance-currency {
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .btn-action {
+            flex: 1;
+            padding: 12px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-withdraw {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(255, 138, 0, 0.2);
+        }
+        .btn-rewards {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid var(--accent-primary);
+        }
+        
+        /* Quick Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .stat-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            color: var(--accent-primary);
+        }
+        .stat-icon.blue { color: #0095FF; background: rgba(0, 149, 255, 0.1); }
+        .stat-icon.orange { color: #FF8A00; background: rgba(255, 138, 0, 0.1); }
+        
+        .stat-title {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        .stat-trend {
+            font-size: 0.65rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        /* Impact Progress */
+        .progress-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .progress-circle-wrap {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-primary) 70%, rgba(255,255,255,0.05) 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .progress-circle-inner {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .progress-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+        .progress-label {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+        
+        /* Activity Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .section-link {
+            font-size: 0.7rem;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .empty-activity {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .empty-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+        }
+    </style>
 </head>
-
 <body>
-    <div class="dashboard">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <span class="brand"><img src="images/logo.jpg" alt="logo" style="height:28px;vertical-align:middle;">
-                    BotalSePaisa</span>
+
+    <header class="top-header">
+        <div class="brand-logo">BotalSePaisa</div>
+        <div class="flex-row gap-1">
+            <span class="badge badge-pending" style="font-size: 0.6rem;">DASHBOARD READY!</span>
+            <img src="images/logo.jpg" class="avatar-mini" alt="User Avatar" onerror="this.src='https://ui-avatars.com/api/?name=User&background=1A2235&color=FF8A00'">
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Hero Card -->
+        <div class="card hero-card">
+            <div class="balance-label">CURRENT PAISA BALANCE</div>
+            <div class="balance-amount">
+                <span id="current-balance">&#8377;0.00</span> 
+                <span class="balance-currency">PAISA</span>
             </div>
-            <nav>
-                <ul>
-                    <li class="active"><span class="icon">🏠</span> Dashboard</li>
-                    <li><span class="icon">🔍</span> <a href="qr.html">Scan QR Code</a></li>
-                    <li><span class="icon">📦</span> <a href="return.html">Return History</a></li>
-                    <li><span class="icon">🏆</span> <a href="leaderboard.html">Leaderboard</a></li>
-                    <li><span class="icon">🤝</span> <a href="invite.html">Invite Friends</a></li>
-                    <li><span class="icon">🛠️</span> <a href="support.html">Support</a></li>
-                    <li><span class="icon">⏻</span> <a href="login.html">Logout</a></li>
-                </ul>
-            </nav>
-        </aside>
-        <main>
-            <header class="main-header">
-                <span>Dashboard</span>
-                <div class="profile">
-                    <span>User Name</span>
-                    <img src="profile.jpg" class="avatar" alt="user" />
+            
+            <div class="action-buttons">
+                <button class="btn-action btn-withdraw" id="withdraw-btn">
+                    <i class='bx bx-wallet-alt'></i> Withdrawal
+                </button>
+                <button class="btn-action btn-rewards">
+                    <i class='bx bx-gift'></i> Rewards
+                </button>
+            </div>
+            <div id="withdraw-msg" style="text-align: center; font-size: 0.7rem; margin-top: 10px; color: var(--text-muted);"></div>
+        </div>
+
+        <!-- Quick Stats -->
+        <h3 class="section-title" style="margin-bottom: 12px; margin-top: 24px; padding-left: 4px;">Quick Stats</h3>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class='bx bx-leaf'></i></div>
+                <div class="stat-title">Bottles Returned</div>
+                <div class="stat-value">
+                    <span id="bottles-returned">0</span>
+                    <span class="stat-trend">+0%</span>
                 </div>
-            </header>
-            <section class="grid-summary">
-                <div class="summary-card">
-                    <div class="sum-title">Bottles Returned</div>
-                    <div class="sum-amount">0</div>
-                    <div class="sum-sub">+0% Since Last Month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class='bx bx-money'></i></div>
+                <div class="stat-title">UPI Earned</div>
+                <div class="stat-value">
+                    <span id="total-earnings">&#8377;0</span>
+                    <span class="stat-trend">+0%</span>
                 </div>
-                <div class="summary-card">
-                    <div class="sum-title">UPI Earned</div>
-                    <div class="sum-amount">&#8377;0</div>
-                    <div class="sum-sub">+0% Since Last Month</div>
+            </div>
+        </div>
+
+        <!-- Impact Progress -->
+        <div class="card progress-card">
+            <h3 style="margin-bottom: 24px; font-size: 1.1rem;">Impact Progress</h3>
+            <div class="progress-circle-wrap">
+                <div class="progress-circle-inner">
+                    <div class="progress-value" id="recycling-rate">0%</div>
+                    <div class="progress-label">MONTHLY GOAL</div>
                 </div>
-                <div class="summary-card">
-                    <div class="sum-title">Leaderboard Rank</div>
-                    <div class="sum-amount">#0</div>
-                    <div class="sum-sub">City Region</div>
-                </div>
-            </section>
-            <section class="grid-widgets">
-                <div class="widget overview">
-                    <div class="w-title">Overview</div>
-                    <ul>
-                        <li class="active">Balance <span class="meta">&#8377;0.00</span></li>
-                        <li>Withdrawals <span class="meta">&#8377;0</span></li>
-                        <li>Rewards <span class="meta">&#8377;0</span></li>
-                        <li>Bottles <span class="meta">0</span></li>
-                    </ul>
-                </div>
-                <div class="widget sale">
-                    <div class="w-title flex-row-sb">
-                        <span>Recycling Rate</span>
-                    </div>
-                    <div class="circular-progress">
-                        <span>70%</span>
-                    </div>
-                </div>
-                <div class="widget activity">
-                    <div class="w-title flex-row-sb">
-                        <span>Activity</span>
-                    </div>
-                    <ul>
-                        <li><span class="dot yellow"></span>No recent activity</li>
-                    </ul>
-                </div>
-            </section>
-        </main>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                You're <span class="text-accent font-bold">away</span> from<br>reaching Elite Tier!
+            </p>
+        </div>
+
+        <!-- Activity -->
+        <div class="section-header" style="margin-top: 24px;">
+            <div class="section-title">Activity</div>
+            <a href="return.html" class="section-link">SEE ALL</a>
+        </div>
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <div id="activity-list" class="empty-activity">
+                <div class="empty-icon"><i class='bx bx-history'></i></div>
+                <h4 style="margin-bottom: 6px; font-size: 0.9rem;">No recent activity</h4>
+                <p class="text-muted" style="font-size: 0.8rem; margin-bottom: 16px;">Start recycling to earn Paisa!</p>
+                <a href="qr.html" class="btn-secondary" style="display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 20px;">Find a machine</a>
+            </div>
+        </div>
     </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="user.html" class="nav-item active">
+            <i class='bx bxs-dashboard'></i>
+            <span>DASHBOARD</span>
+        </a>
+        <a href="qr.html" class="nav-item">
+            <i class='bx bx-qr-scan'></i>
+            <span>SCAN</span>
+        </a>
+        <a href="return.html" class="nav-item">
+            <i class='bx bx-history'></i>
+            <span>HISTORY</span>
+        </a>
+        <a href="leaderboard.html" class="nav-item">
+            <i class='bx bx-bar-chart-alt-2'></i>
+            <span>RANKINGS</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class='bx bx-user'></i>
+            <span>PROFILE</span>
+        </a>
+    </nav>
+
+    <!-- Scanner floating button (optional based on screenshot, but bottom nav handles it) -->
+    <!-- Let's add a subtle glow to the scan button in the nav to make it pop -->
+    <style>
+        .nav-item[href="qr.html"] i {
+            color: var(--accent-primary);
+            text-shadow: 0 0 10px rgba(255, 138, 0, 0.5);
+        }
+    </style>
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/user-dashboard.js"></script>
 </body>
-
 </html>

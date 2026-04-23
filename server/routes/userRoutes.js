@@ -11,5 +11,7 @@ router.post('/login', userController.login);
 router.get('/me', auth, userController.me);
 router.get('/metrics', auth, userController.metrics);
 router.get('/activity', auth, userController.activity);
+router.get('/history', auth, userController.history);
+router.get('/leaderboard', auth, userController.getLeaderboard);
 
 module.exports = router;

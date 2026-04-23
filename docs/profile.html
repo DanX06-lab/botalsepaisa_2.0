@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BotalSePaisa - Profile</title>
+    <link rel="stylesheet" href="styles/app.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+        .top-header .brand-logo {
+            font-size: 1.25rem;
+            color: var(--accent-primary);
+        }
+        .header-icon {
+            color: var(--accent-primary);
+            font-size: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.6rem;
+            color: white;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+        .page-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 24px;
+        }
+
+        /* Impact Metric Cards */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .impact-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        .impact-card.large {
+            grid-column: 1 / -1;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .ic-label {
+            font-size: 0.65rem;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .ic-val {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+        .ic-unit {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .ic-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255,138,0,0.1);
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* Chart Area */
+        .chart-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 30px;
+        }
+        .chart-header { margin-bottom: 20px; }
+        .chart-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+        .chart-sub { font-size: 0.75rem; color: var(--text-muted); }
+        
+        .dummy-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 120px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 10px;
+        }
+        .bar { width: 10%; background: rgba(255,255,255,0.1); border-radius: 4px 4px 0 0; }
+        .bar.active { background: var(--accent-gradient); }
+        .chart-labels { display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--text-muted); }
+
+        /* Achievements */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .ach-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .ach-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--bg-input);
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            position: relative;
+        }
+        .ach-icon.unlocked {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(255,138,0,0.2);
+        }
+        .ach-label { font-size: 0.7rem; color: var(--text-muted); text-align: center; }
+
+        /* Next Milestone */
+        .milestone-card {
+            background: var(--bg-input);
+            border: 1px dashed rgba(255,138,0,0.3);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        /* Personal Details Section */
+        .profile-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            margin-top: 20px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-primary);
+            margin-bottom: 16px;
+            object-fit: cover;
+        }
+        
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .wallet-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .details-list {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-md);
+            padding: 10px 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+        }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-label { color: var(--text-muted); }
+        .detail-value { font-weight: 600; text-align: right; }
+
+        /* Settings Links */
+        .settings-link {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-sm);
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .settings-link.logout { background: rgba(255,61,113,0.1); border-color: rgba(255,61,113,0.2); color: var(--danger); justify-content: center; gap: 8px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <div class="flex-row gap-1">
+            <i class='bx bx-user-circle' style="font-size: 1.5rem; color:var(--accent-primary);"></i>
+            <span class="brand-logo" style="font-size: 1rem;">BotalSePaisa</span>
+        </div>
+        <i class='bx bxs-bell header-icon'></i>
+    </header>
+
+    <div class="container" style="padding-top: 0;">
+        <h1 class="page-title">Your Global Impact</h1>
+        <p class="page-subtitle">Real-time metrics of your environmental contribution.</p>
+
+        <div class="impact-grid">
+            <div class="impact-card large">
+                <div>
+                    <div class="ic-label">PLASTIC DIVERTED</div>
+                    <div class="ic-val" id="impact-plastic">0<span class="ic-unit">kg</span></div>
+                </div>
+                <div class="ic-icon"><i class='bx bx-recycle'></i></div>
+            </div>
+            <div class="impact-card">
+                <div class="ic-label" style="color: #0095FF;"><i class='bx bx-cloud'></i> CO2 SAVED</div>
+                <div class="ic-val" id="impact-co2">0<span class="ic-unit">kg</span></div>
+            </div>
+            <div class="impact-card">
+                <div class="ic-label" style="color: #00D68F;"><i class='bx bx-water'></i> WATER SAVED</div>
+                <div class="ic-val" id="impact-water">0<span class="ic-unit">L</span></div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <div class="chart-title">Monthly Growth</div>
+                <div class="chart-sub">+14% increase from last month</div>
+            </div>
+            <div class="dummy-chart">
+                <div class="bar" style="height: 40%;"></div>
+                <div class="bar active" style="height: 60%;"></div>
+                <div class="bar" style="height: 30%;"></div>
+                <div class="bar" style="height: 50%;"></div>
+                <div class="bar active" style="height: 80%;"></div>
+                <div class="bar" style="height: 40%;"></div>
+            </div>
+            <div class="chart-labels">
+                <span>DAY 1</span>
+                <span>DAY 15</span>
+                <span>DAY 30</span>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h3 style="font-size: 1.1rem;">Achievements</h3>
+            <a href="#" style="font-size: 0.7rem; color: var(--accent-primary); text-decoration: none; font-weight: 700;">VIEW ALL</a>
+        </div>
+        
+        <div class="achievements-grid">
+            <div class="ach-item">
+                <div class="ach-icon unlocked"><i class='bx bx-medal'></i></div>
+                <div class="ach-label">Eco Warrior</div>
+            </div>
+            <div class="ach-item">
+                <div class="ach-icon unlocked"><i class='bx bx-qr-scan'></i></div>
+                <div class="ach-label">First Scan</div>
+            </div>
+            <div class="ach-item">
+                <div class="ach-icon"><i class='bx bx-tree'></i></div>
+                <div class="ach-label">Tree Planter</div>
+            </div>
+        </div>
+
+        <!-- Personal Details Section -->
+        <div class="profile-hero">
+            <img src="https://ui-avatars.com/api/?name=User&background=1A2235&color=FF8A00" class="avatar-large" id="profile-avatar">
+            <h2 style="font-size: 1.25rem; margin-bottom: 4px;" id="profile-name">User Name</h2>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 16px;" id="profile-email">user@example.com</p>
+            <div class="badge badge-pending" style="font-size: 0.7rem;">BOTAL ID: 89X2 <i class='bx bx-copy'></i></div>
+        </div>
+
+        <div class="wallet-grid">
+            <div class="wallet-card">
+                <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px;">Wallet</div>
+                <div style="font-size: 1.1rem; font-weight: 700;" id="profile-wallet">&#8377;0</div>
+            </div>
+            <div class="wallet-card">
+                <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px;">Total Earned</div>
+                <div style="font-size: 1.1rem; font-weight: 700;" id="profile-earned">&#8377;0</div>
+            </div>
+            <div class="wallet-card" style="grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Recycled</span>
+                <i class='bx bx-recycle' style="color: var(--accent-primary);"></i>
+                <span style="font-weight: 700;" id="profile-bottles">0</span>
+            </div>
+        </div>
+
+        <h3 style="font-size: 1rem; margin-bottom: 12px; margin-top: 30px;">Personal Details</h3>
+        <div class="details-list">
+            <div class="detail-item">
+                <span class="detail-label">Full Name</span>
+                <span class="detail-value" id="detail-name">User Name</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Email</span>
+                <span class="detail-value" id="detail-email">user@example.com</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Member Since</span>
+                <span class="detail-value" id="detail-date">Today</span>
+            </div>
+        </div>
+
+        <a href="#" class="settings-link">
+            <span><i class='bx bx-user' style="margin-right: 8px;"></i> Edit Profile</span>
+            <i class='bx bx-chevron-right'></i>
+        </a>
+        <a href="#" class="settings-link">
+            <span><i class='bx bx-lock-alt' style="margin-right: 8px;"></i> Change Password</span>
+            <i class='bx bx-chevron-right'></i>
+        </a>
+        
+        <a href="login.html" class="settings-link logout" onclick="localStorage.clear();">
+            <i class='bx bx-log-out'></i> Logout
+        </a>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="user.html" class="nav-item">
+            <i class='bx bx-grid-alt'></i>
+            <span>DASHBOARD</span>
+        </a>
+        <a href="qr.html" class="nav-item">
+            <i class='bx bx-qr-scan'></i>
+            <span>SCAN</span>
+        </a>
+        <a href="return.html" class="nav-item">
+            <i class='bx bx-history'></i>
+            <span>HISTORY</span>
+        </a>
+        <a href="leaderboard.html" class="nav-item">
+            <i class='bx bx-bar-chart-alt-2'></i>
+            <span>RANKINGS</span>
+        </a>
+        <a href="profile.html" class="nav-item active">
+            <i class='bx bxs-user'></i>
+            <span>PROFILE</span>
+        </a>
+    </nav>
+    <style>
+        .nav-item.active i { color: var(--accent-primary); text-shadow: 0 0 10px rgba(255, 138, 0, 0.5); }
+    </style>
+
+    <script src="js/profile.js"></script>
+</body>
+</html>

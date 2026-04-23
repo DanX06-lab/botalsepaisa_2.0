@@ -73,15 +73,16 @@ app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
+
     // Check if the origin is in the allowed list or contains 'github.io'
-    if (allowedOrigins.includes(origin) || 
-        origin.endsWith('.github.io') ||
-        origin.includes('localhost') || 
-        origin.includes('127.0.0.1')) {
+    if (allowedOrigins.includes(origin) ||
+      origin.endsWith('.github.io') ||
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1') ||
+      origin.includes('ngrok')) {
       return callback(null, true);
     }
-    
+
     console.warn('Blocked by CORS:', origin);
     return callback(new Error('Not allowed by CORS'));
   },
@@ -94,7 +95,8 @@ app.use(cors({
     'Accept',
     'Origin',
     'Access-Control-Allow-Headers',
-    'Access-Control-Request-Method'
+    'Access-Control-Request-Method',
+    'ngrok-skip-browser-warning'
   ],
   exposedHeaders: [
     'Content-Length',

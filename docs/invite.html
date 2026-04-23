@@ -1,74 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Invite Friends | Botalsepaisa</title>
-    <link rel="stylesheet" href="styles/invite.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap" rel="stylesheet" />
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BotalSePaisa - Invite Friends</title>
+    <link rel="stylesheet" href="styles/app.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .top-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            gap: 15px;
+        }
+        .top-header .brand-logo {
+            font-size: 1.25rem;
+            color: var(--accent-primary);
+        }
+        .back-btn {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+        }
 
+        .hero-img {
+            width: 100%;
+            height: 180px;
+            border-radius: var(--border-radius-md);
+            object-fit: cover;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .invite-card {
+            background: linear-gradient(180deg, #1A2235 0%, #151A2E 100%);
+            border-radius: var(--border-radius-md);
+            padding: 24px;
+            border: 1px solid rgba(255,138,0,0.1);
+            margin-bottom: 20px;
+        }
+        .ic-title {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+        .ic-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .promo-box {
+            background: rgba(255,138,0,0.05);
+            border: 1px solid rgba(255,138,0,0.2);
+            border-radius: var(--border-radius-sm);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .pb-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,138,0,0.15);
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        .pb-title { font-size: 0.85rem; font-weight: 700; color: white; margin-bottom: 4px; }
+        .pb-desc { font-size: 0.7rem; color: var(--text-muted); line-height: 1.3; }
+
+        .input-group label { margin-bottom: 8px; font-size: 0.65rem; color: white; }
+        .link-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .link-input-wrap {
+            position: relative;
+            flex: 1;
+        }
+        .link-input-wrap input {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            padding: 14px 40px 14px 16px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .copy-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-primary);
+            cursor: pointer;
+        }
+        .share-btn {
+            background: transparent;
+            border: none;
+            color: var(--accent-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-sm);
+            padding: 16px 10px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .sc-title { font-size: 0.6rem; color: var(--text-muted); margin-bottom: 8px; line-height: 1.2; height: 18px; }
+        .sc-val { font-size: 1.1rem; font-weight: 700; color: var(--accent-secondary); }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .divider:not(:empty)::before { margin-right: 1em; }
+        .divider:not(:empty)::after { margin-left: 1em; }
+
+        .social-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .social-icon.whatsapp { color: #25D366; }
+        .social-icon.sms { color: #0084FF; }
+        .social-icon.email { color: var(--accent-primary); }
+    </style>
+</head>
 <body>
-    <header class="header">
-        <h1 class="logo">Botalsepaisa</h1>
-        <button class="back-btn" onclick="location.href='user.html'">← Back to Dashboard</button>
+
+    <header class="top-header">
+        <a href="user.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i></a>
+        <div class="brand-logo" style="flex: 1;">BotalSePaisa</div>
     </header>
 
-    <main class="container">
-        <h2>Invite Friends & Earn Rewards</h2>
+    <div class="container" style="padding-top: 0;">
+        <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80" alt="Friends" class="hero-img">
 
-        <p>Share your referral link or invite friends by entering their email addresses below.</p>
+        <div class="invite-card">
+            <h1 class="ic-title">Invite Friends &<br>Earn Rewards</h1>
+            <p class="ic-desc">Share your referral link or invite friends to earn wallet rewards when they sign up and recycle bottles.</p>
 
-        <section class="referral-link-section">
-            <label for="referral-link">Your Referral Link</label>
-            <div class="referral-link-wrapper">
-                <input type="text" id="referral-link" readonly value="https://botalsepaisa.com/referral/USER12345" />
-                <button id="copy-link-btn">Copy Link</button>
+            <div class="promo-box">
+                <div class="pb-icon"><i class='bx bx-gift'></i></div>
+                <div>
+                    <div class="pb-title">Earn &#8377;25 when a friend signs up</div>
+                    <div class="pb-desc">Earn bonus when they recycle their first bottle</div>
+                </div>
             </div>
-            <p id="copy-status" class="copy-status"></p>
-        </section>
 
-        <section class="invite-form-section">
-            <form id="invite-form">
-                <label for="friend-email">Friend's Email</label>
-                <input type="email" id="friend-email" required placeholder="Enter friend's email" />
-                <button type="submit">Send Invitation</button>
-            </form>
-        </section>
+            <div class="input-group">
+                <label>YOUR REFERRAL LINK</label>
+                <div class="link-box">
+                    <div class="link-input-wrap">
+                        <input type="text" value="botalsepaisa.com/ref/akash782" readonly id="ref-link">
+                        <i class='bx bx-copy copy-icon' onclick="copyLink()"></i>
+                    </div>
+                    <button class="share-btn"><i class='bx bx-share-alt'></i></button>
+                </div>
+            </div>
 
-        <p class="note">Anyone who signs up using your referral link or email will earn you rewards!</p>
-    </main>
+            <div class="input-group" style="margin-bottom: 24px;">
+                <label>FRIEND'S EMAIL</label>
+                <input type="email" class="input-field" placeholder="friend@example.com" style="background: var(--bg-dark);">
+            </div>
 
-    <footer class="footer">
-        <p>© 2025 Botalsepaisa · Transforming waste into wealth</p>
-    </footer>
+            <button class="btn-primary">SEND INVITATION</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="sc-title">Total Referrals</div>
+                <div class="sc-val">12</div>
+            </div>
+            <div class="stat-card">
+                <div class="sc-title">Rewards Earned</div>
+                <div class="sc-val">&#8377;300</div>
+            </div>
+            <div class="stat-card">
+                <div class="sc-title">Pending Invites</div>
+                <div class="sc-val">5</div>
+            </div>
+        </div>
+
+        <div class="divider">OR SHARE VIA</div>
+
+        <div class="social-row">
+            <div class="social-icon whatsapp"><i class='bx bxl-whatsapp'></i></div>
+            <div class="social-icon sms"><i class='bx bx-message-rounded-dots'></i></div>
+            <div class="social-icon email"><i class='bx bx-at'></i></div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="user.html" class="nav-item">
+            <i class='bx bx-grid-alt'></i>
+            <span>DASHBOARD</span>
+        </a>
+        <a href="qr.html" class="nav-item">
+            <i class='bx bx-qr-scan'></i>
+            <span>SCAN</span>
+        </a>
+        <a href="return.html" class="nav-item">
+            <i class='bx bx-history'></i>
+            <span>HISTORY</span>
+        </a>
+        <a href="leaderboard.html" class="nav-item">
+            <i class='bx bx-bar-chart-alt-2'></i>
+            <span>RANKINGS</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class='bx bx-user'></i>
+            <span>PROFILE</span>
+        </a>
+    </nav>
 
     <script>
-        const copyBtn = document.getElementById('copy-link-btn');
-        const referralInput = document.getElementById('referral-link');
-        const copyStatus = document.getElementById('copy-status');
-        const inviteForm = document.getElementById('invite-form');
-
-        copyBtn.addEventListener('click', () => {
-            referralInput.select();
-            referralInput.setSelectionRange(0, 99999); // For mobile devices
-            navigator.clipboard.writeText(referralInput.value).then(() => {
-                copyStatus.textContent = 'Link copied to clipboard!';
-                setTimeout(() => copyStatus.textContent = '', 3000);
-            });
-        });
-
-        inviteForm.addEventListener('submit', e => {
-            e.preventDefault();
-            const email = document.getElementById('friend-email').value.trim();
-
-            if (email) {
-                alert(`Invitation sent to ${email}!`);
-                inviteForm.reset();
-            }
-        });
+        function copyLink() {
+            const input = document.getElementById('ref-link');
+            input.select();
+            document.execCommand('copy');
+            alert('Referral link copied!');
+        }
     </script>
 </body>
-
 </html>
