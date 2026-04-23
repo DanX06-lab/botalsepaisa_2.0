@@ -236,7 +236,7 @@
             </form>
         </div>
 
-        <a href="login.html" class="back-link">← Back to User Login</a>
+        <a href="../login.html" class="back-link">← Back to User Login</a>
     </div>
 
     <script>
@@ -305,7 +305,7 @@
                 showMsg('Welcome back, Admin! Redirecting...', 'success');
 
                 setTimeout(() => {
-                    window.location.href = 'admin-dashboard.html';
+                    window.location.href = 'dashboard.html';
                 }, 1000);
 
             } catch (error) {
@@ -318,7 +318,7 @@
         // If already logged in as admin, redirect
         const existingToken = localStorage.getItem('token');
         if (existingToken && localStorage.getItem('isAdmin') === 'true') {
-            window.location.href = 'admin-dashboard.html';
+            window.location.href = 'dashboard.html';
         }
     </script>
 </body>
