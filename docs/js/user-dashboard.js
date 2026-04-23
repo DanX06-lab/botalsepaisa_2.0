@@ -1,6 +1,10 @@
 (() => {
   const TOKEN_KEY = 'token';
-  const API_BASE = 'https://botalsepaisa-2-0.onrender.com';
+  const API_BASE =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? "http://localhost:5000"
+    : "https://botalsepaisa-2-0.onrender.com";
   const POLL_MS = 10000;
 
   const els = {

@@ -33,18 +33,90 @@ body {
     display: flex;
 }
 
-/* Sidebar */
+/* Sidebar Navigation - Button Style */
+.sidebar nav ul {
+    width: 100%;
+    padding: 0 0.75rem;
+}
+
+.sidebar nav ul li {
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar nav ul li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
 .sidebar a {
     text-decoration: none;
     color: var(--text-light);
-    transition: all 0.3s ease;
-    display: block;
-    padding: 0.5rem 0;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.6, 1);
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1.2rem;
+    font-weight: 500;
+    border-radius: 0.6rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent-amber);
+    transform: scaleY(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar a:hover {
+    background: rgba(245, 158, 11, 0.08);
     color: var(--accent-amber);
-    transform: translateX(3px);
+    transform: none;
+}
+
+.sidebar a:hover::before {
+    transform: scaleY(1);
+}
+
+.sidebar .icon {
+    margin-right: 0.8rem;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+}
+
+.sidebar a:hover .icon {
+    transform: scale(1.1);
+}
+
+.sidebar nav ul li.active {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.sidebar nav ul li.active a {
+    color: var(--accent-amber);
+    font-weight: 600;
+    background: none;
+}
+
+.sidebar nav ul li.active a::before {
+    transform: scaleY(1);
+    background: var(--accent-amber);
+}
+
+.sidebar nav ul li.active .icon {
+    transform: scale(1.1);
 }
 
 .sidebar {
